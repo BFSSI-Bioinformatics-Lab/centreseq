@@ -12,8 +12,8 @@ import click
 import logging
 from numba import jit
 from pathlib import Path
-from centreseq.bin.core import cluster_tsv_to_df
-from centreseq.bin.core import measure
+from centreseq.bin.core.summary import cluster_tsv_to_df
+from centreseq.bin.core.accessories import measure
 
 script = os.path.basename(__file__)
 logger = logging.getLogger()

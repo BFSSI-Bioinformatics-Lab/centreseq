@@ -7,7 +7,7 @@ from pathlib import Path
 from subprocess import PIPE, Popen
 from time import time
 
-from centreseq.bin.core import SampleObject
+from centreseq.bin.core.sample_handling import SampleObject
 from centreseq.config import EXTERNAL_DEPENDENCIES
 
 main_log = logging.getLogger('main_log')

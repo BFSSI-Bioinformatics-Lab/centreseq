@@ -5,11 +5,11 @@ from pathlib import Path
 import numpy as np
 from tqdm import tqdm
 
-from centreseq.bin.tree import ClusterVariants, populate_cluster_object
-from centreseq.bin.tree import concatenate_sequence_directory
-from centreseq.bin.tree import generate_variant_summary_df, generate_variant_detail_df, write_tsv_from_df, \
+from centreseq.bin.tree.cluster_data_structures import ClusterVariants, populate_cluster_object
+from centreseq.bin.tree.concatenate_sequences import concatenate_sequence_directory
+from centreseq.bin.tree.summary import generate_variant_summary_df, generate_variant_detail_df, write_tsv_from_df, \
     read_summary_report
-from centreseq.bin.tree import call_snp_sites, call_muscle
+from centreseq.bin.tree.wrappers import call_snp_sites, call_muscle
 
 main_log = logging.getLogger('main_log')
 

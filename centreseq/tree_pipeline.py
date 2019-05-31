@@ -3,8 +3,8 @@ from pathlib import Path
 
 import click
 
-from centreseq.bin.core import set_cpu_count
-from centreseq.bin.tree import tree_pipeline
+from centreseq.bin.core.accessories import set_cpu_count
+from centreseq.bin.tree.main import tree_pipeline
 
 __version__ = "0.0.1"
 __authors__ = ["Forest Dussault"]
