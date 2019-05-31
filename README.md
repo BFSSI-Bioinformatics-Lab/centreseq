@@ -9,8 +9,8 @@ The following must be available in your *$PATH*
 1. Clone the repo and navigate to directory
 
 ```
-git clone https://github.com/bfssi-forest-dussault/Prototyping_HardCORE.git
-cd Prototyping_HardCORE
+git clone https://github.com/bfssi-forest-dussault/centreseq.git
+cd centreseq
 ```
 
 2. Create a new conda env with the environment.yml file
@@ -26,7 +26,7 @@ python core_pipeline.py --help
 
 ### Usage
 ```
-Usage: core_pipeline.py [OPTIONS]
+Usage: centreseq.py [OPTIONS]
 
   Given an input directory containing assemblies, this will establish a core
   genome through running Prokka and mmseqs2.
@@ -36,7 +36,7 @@ Options:
                           core pipeline on  [required]
   -o, --outdir PATH       Root directory to store all output files  [required]
   -n, --n-cpu INTEGER     Number of CPUs to dedicate to parallelizable steps
-                          of the pipeline.Will take all available CPUs - 1 if
+                          of the pipeline. Will take all available CPUs - 1 if
                           not specified.
   -m, --min-seq-id FLOAT  Sets the mmseqs cluster parameter "--min-seq-id".
                           Defaults to 0.95.
