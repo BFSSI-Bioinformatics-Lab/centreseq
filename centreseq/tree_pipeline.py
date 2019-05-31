@@ -6,7 +6,7 @@ import click
 from centreseq.bin.core.accessories import set_cpu_count
 from centreseq.bin.tree.main import tree_pipeline
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 __authors__ = ["Forest Dussault"]
 __email__ = "forest.dussault@canada.ca"
 
