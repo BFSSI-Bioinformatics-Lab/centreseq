@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+      integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+      crossorigin="anonymous">
+<style>
+    body {
+        font: 10px sans-serif;
+    }
+
+    .links line {
+        stroke: #666;
+        stroke-opacity: 0.6;
+    }
+
+    .nodes circle {
+        stroke: #fff;
+        stroke-width: 0.8px;
+    }
+
+    text {
+        font-family: sans-serif;
+        font-size: 10px;
+    }
+
+    #network-graph text {
+        font-family: sans-serif;
+        font-size: 8px;
+    }
+</style>
+
+<body>
+<!-- Start a server with `python -m http.server` -->
+<br>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-4 border">
+            <h2>Report Summary</h2>
+            <div id="report-summary"></div>
+        </div>
+
+        <div class="col-sm-4 border">
+            <h2>Similarity cutoff</h2>
+            <p>Adjust this value to change the % similarity cutoff for drawing the network graph.</p>
+            <div class="row align-items-center">
+                <div class="col-sm-2">
+                    <!-- <p class="text text-primary" id="value-fill"></p> -->
+                    <div id="option">
+                        <input class="btn btn-sm btn-primary" id="updateButton" type="button" value="Update"/>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div id="slider-fill"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <br>
+
+    <h2>Force Network</h2>
+    <div id="network-graph">
+        <div class="border" id="network-svg"></div>
+    </div>
+
+</div>
+
+
+<!-- D3 -->
+<!--These variables are autopopulated by generate_network_chart.py-->
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/d3-simple-slider"></script>
+
+<!-- Bootstrap -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+
+<!-- Network chart -->
+<script>
+    function load_roary_report(report_path) {
+        console.log("Roary Report Path: " + report_path);
+        return d3.text(report_path)
+            .then(function (text) {
+                return d3.tsvParseRows(text);
+            })
+            .catch(function (error) {
+                console.log(error);
+                return error;
+            })
+    }
+
+
+    // Load the Roary report and populate .data-info
+    roary_report = load_roary_report('ROARY_GENE_COUNT_REPORT_VARIABLE');
+    roary_report.then(function (data) {
+        let core_genes = data[0][2];
+        let soft_core_genes = data[1][2];
+        let shell_genes = data[2][2];
+        let cloud_genes = data[3][2];
+        let total_genes = data[4][2];
+
+        let report_summary_div = $("#report-summary");
+        report_summary_div.append("<p><strong>Total core genes: </strong>" + core_genes + "</p>");
+        report_summary_div.append("<p><strong>Total soft core genes: </strong>" + soft_core_genes + "</p>");
+        report_summary_div.append("<p><strong>Total shell genes: </strong>" + shell_genes + "</p>");
+        report_summary_div.append("<p><strong>Total cloud genes: </strong>" + cloud_genes + "</p>");
+        report_summary_div.append("<p><strong>Total genes: </strong>" + total_genes + "</p>");
+    });
+
+    // Generate the slider (from https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518)
+    var slider_ticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0];
+    var sliderFill = d3
+        .sliderBottom()
+        .min(d3.min(slider_ticks))
+        .max(d3.max(slider_ticks))
+        .width(300)
+        .tickFormat(d3.format('.2%'))
+        .ticks(5)
+        .default(0.85)
+        .fill('#2196f3')
+        .on('onchange', val => {
+            // d3.select('p#value-fill').text(d3.format('.2%')(val));
+            percent_cutoff = val * 100;
+        });
+
+    var gFill = d3
+        .select('div#slider-fill')
+        .append('svg')
+        .attr('width', 500)
+        .attr('height', 100)
+        .append('g')
+        .attr('transform', 'translate(30,30)');
+
+    gFill.call(sliderFill);
+
+    d3.select('p#value-fill').text(d3.format('.2%')(sliderFill.value()));
+
+    d3.tsv('PAIRWISE_GENE_COUNT_REPORT_TSV')
+        .then(function (data) {
+            console.log("Pairwise Gene Count Report Path: " + 'PAIRWISE_GENE_COUNT_REPORT_TSV');
+
+            // Network graph size
+            var margin = {
+                    top: 20,
+                    right: 40,
+                    bottom: 20,
+                    left: 40
+                },
+                width = $("#network-graph").width() - margin.left - margin.right,
+                height = 580 - margin.top - margin.bottom;
+
+            // Pull cutoff value from the slider
+            percent_cutoff = $("g.parameter-value")[0].textContent;
+
+            // Prepping data for the network graph (Source: https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8)
+            // Grab all unique sample names
+            let sample_names = [];
+            for (i = 0; i < data.length; i++) {
+                sample_names.push(data[i].sample_1);
+                sample_names.push(data[i].sample_2);
+            }
+            sample_names = [...new Set(sample_names)];
+
+            // console.log(graph);
+
+            // Prepare network graph
+            var svg = d3.select("#network-svg")
+                .append('svg')
+                .attr("width", width)
+                .attr("height", height)
+                .attr("transform", "translate(" + margin.left + "," + 0 + ")");
+
+            var attractForce = d3.forceManyBody().strength(-10).distanceMax(100).distanceMin(10);
+            var repelForce = d3.forceManyBody().strength(-100).distanceMax(30).distanceMin(1);
+            var chargeForce = d3.forceManyBody().strength(-10);
+            var centerForce = d3.forceCenter(width / 2, height / 2);
+
+            var simulation = d3.forceSimulation()
+                .force("link", d3.forceLink().id(function (d) {
+                    return d.id;
+                }))
+                .alphaDecay(0.05)
+                .force("chargeForce", chargeForce)
+                .force("centerForce", centerForce)
+                .force("attractForce", attractForce)
+                .force("repelForce", repelForce);
+
+            //add encompassing group for the zoom
+            var g = svg.append("g")
+                .attr("class", "everything");
+
+            // Create graph object
+            graph = establish_graph_object(sample_names, data, percent_cutoff);
+
+            var link = g.append("g")
+                .attr("class", "links")
+                .selectAll("line")
+                .data(graph.links)
+                .enter().append("line")
+                .attr("stroke-width", function (d) {
+                    return Math.sqrt(d.value / 4);
+                });
+
+            var node = g.append("g")
+                .attr("class", "nodes")
+                .selectAll("g")
+                .data(graph.nodes)
+                .enter().append("g")
+
+            var circles = node.append("circle")
+                .attr("r", 4)
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+
+            // TODO: Allow this to enabled via tick box
+            // var labels = node.append("text")
+            //     .text(function (d) {
+            //         return d.id;
+            //     })
+            //     .attr('x', 6)
+            //     .attr('y', 3);
+
+            node.append("title")
+                .text(function (d) {
+                    return d.id;
+                });
+
+            simulation
+                .nodes(graph.nodes)
+                .on("tick", ticked);
+
+            simulation.force("link").links(graph.links)
+
+            //add drag capabilities
+            var drag_handler = d3.drag()
+                .on("start", drag_start)
+                .on("drag", drag_drag)
+                .on("end", drag_end);
+
+            drag_handler(node);
+
+            //add zoom capabilities
+            var zoom_handler = d3.zoom()
+                .on("zoom", zoom_actions);
+
+            zoom_handler(svg);
+
+            // Enable the update button
+            $("#updateButton").click(function () {
+                update_graph(svg, sample_names, data, percent_cutoff);
+            })
+
+            function ticked() {
+                link
+                    .attr("x1", function (d) {
+                        return d.source.x;
+                    })
+                    .attr("y1", function (d) {
+                        return d.source.y;
+                    })
+                    .attr("x2", function (d) {
+                        return d.target.x;
+                    })
+                    .attr("y2", function (d) {
+                        return d.target.y;
+                    });
+
+                node
+                    .attr("transform", function (d) {
+                        return "translate(" + d.x + "," + d.y + ")";
+                    })
+            }
+
+            function dragstarted(d) {
+                if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(d) {
+                d.fx = d3.event.x;
+                d.fy = d3.event.y;
+            }
+
+            function dragended(d) {
+                if (!d3.event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+
+            //Drag functions
+            //d is the node
+            function drag_start(d) {
+                if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            //make sure you can't drag the circle outside the box
+            function drag_drag(d) {
+                d.fx = d3.event.x;
+                d.fy = d3.event.y;
+            }
+
+            function drag_end(d) {
+                if (!d3.event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+
+            //Zoom functions (https://bl.ocks.org/puzzler10/4438752bb93f45dc5ad5214efaa12e4a)
+            function zoom_actions() {
+                g.attr("transform", d3.event.transform)
+            }
+
+            function tickActions() {
+                //update circle positions each tick of the simulation
+                node
+                    .attr("cx", function (d) {
+                        return d.x;
+                    })
+                    .attr("cy", function (d) {
+                        return d.y;
+                    });
+
+                //update link positions
+                link
+                    .attr("x1", function (d) {
+                        return d.source.x;
+                    })
+                    .attr("y1", function (d) {
+                        return d.source.y;
+                    })
+                    .attr("x2", function (d) {
+                        return d.target.x;
+                    })
+                    .attr("y2", function (d) {
+                        return d.target.y;
+                    });
+            }
+
+            function update_graph(svg, sample_names, data, percent_cutoff) {
+                // Get new data
+                graph = establish_graph_object(sample_names, data, percent_cutoff);
+                // console.log(graph);
+
+                svg.selectAll("*").remove();
+
+                // Restart simulation
+                attractForce = d3.forceManyBody().strength(-10).distanceMax(100).distanceMin(10);
+                repelForce = d3.forceManyBody().strength(-100).distanceMax(30).distanceMin(1);
+                chargeForce = d3.forceManyBody().strength(-10);
+                centerForce = d3.forceCenter(width / 2, height / 2);
+
+                simulation = d3.forceSimulation()
+                    .force("link", d3.forceLink().id(function (d) {
+                        return d.id;
+                    }))
+                    .alphaDecay(0.05)
+                    .force("chargeForce", chargeForce)
+                    .force("centerForce", centerForce)
+                    .force("attractForce", attractForce)
+                    .force("repelForce", repelForce);
+
+                g = svg.append("g")
+                    .attr("class", "everything");
+
+                link = g.append("g")
+                    .attr("class", "links")
+                    .selectAll("line")
+                    .data(graph.links)
+                    .enter().append("line")
+                    .attr("stroke-width", function (d) {
+                        return Math.sqrt(d.value / 4);
+                    });
+
+                node = g.append("g")
+                    .attr("class", "nodes")
+                    .selectAll("g")
+                    .data(graph.nodes)
+                    .enter().append("g")
+
+                circles = node.append("circle")
+                    .attr("r", 4)
+                    .call(d3.drag()
+                        .on("start", dragstarted)
+                        .on("drag", dragged)
+                        .on("end", dragended));
+
+                // labels = node.append("text")
+                //     .text(function (d) {
+                //         return d.id;
+                //     })
+                //     .attr('x', 6)
+                //     .attr('y', 3);
+
+                node.append("title")
+                    .text(function (d) {
+                        return d.id;
+                    });
+
+                simulation
+                    .nodes(graph.nodes)
+                    .on("tick", ticked);
+
+                simulation.force("link").links(graph.links)
+
+                //add drag capabilities
+                drag_handler = d3.drag()
+                    .on("start", drag_start)
+                    .on("drag", drag_drag)
+                    .on("end", drag_end);
+
+                drag_handler(node);
+
+                //add zoom capabilities
+                zoom_handler = d3.zoom()
+                    .on("zoom", zoom_actions);
+
+                zoom_handler(svg);
+            }
+
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+
+    function establish_graph_object(sample_names, data, percent_cutoff) {
+        // Establish nodes object from sample_names
+        let nodes = [];
+        for (i = 0; i < sample_names.length; i++) {
+            nodes.push({
+                'id': sample_names[i]
+            });
+        }
+
+        // Establish links object from loaded data - match_percentage must exceed percent_cutoff for samples to be linked
+        let links = [];
+        data.forEach(function (d) {
+            if (d.match_percentage > percent_cutoff) {
+                links.push({
+                    'source': d.sample_1,
+                    'target': d.sample_2,
+                    'value': parseFloat(d.match_percentage).toFixed(2)
+                });
+            }
+        });
+
+        // Combine links and nodes into one object
+        let graph = {
+            nodes,
+            links
+        };
+        return graph;
+    }
+</script>
