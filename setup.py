@@ -14,8 +14,8 @@ setuptools.setup(
     description="Package for checking for the presence/absence of markers against a set of samples",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/bfssi-forest-dussault/SeqPresenceAbsence",
-    package_data={'SeqPresenceAbsence': ['*']},
+    url="https://github.com/bfssi-forest-dussault/centreseq",
+    package_data={'centreseq': ['*']},
     install_pacakage_data=True,
     packages=setuptools.find_packages(),
     version=__version__,
@@ -23,7 +23,7 @@ setuptools.setup(
     author_email=__email__,
     entry_points={
         'console_scripts': [
-            'seqPresenceAbsence=SeqPresenceAbsence.SeqPresenceAbsence:cli'
+            'centreseq=centreseq.centreseq:cli'
         ]
     }
 )
