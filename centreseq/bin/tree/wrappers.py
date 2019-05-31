@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from bin.core.accessories import run_subprocess
+from centreseq.bin.core import run_subprocess
 
 
 def call_snp_sites(aligned_multifasta: Path, outdir: Path) -> Path:

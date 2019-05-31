@@ -5,7 +5,7 @@ import pandas as pd
 from cyvcf2.cyvcf2 import VCF
 from dataclasses import dataclass
 
-from bin.core.accessories import extract_sequence
+from centreseq.bin.core import extract_sequence
 
 main_log = logging.getLogger('main_log')
 

@@ -2,7 +2,7 @@ from copy import deepcopy
 from multiprocessing import Pool
 from pathlib import Path
 import pandas as pd
-from bin.core.accessories import run_subprocess
+from centreseq.bin.core import run_subprocess
 
 
 def call_muscle(infile: Path, outfile: Path = None):

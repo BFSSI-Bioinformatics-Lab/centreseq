@@ -7,16 +7,17 @@ from pathlib import Path
 import click
 from tqdm import tqdm
 
-from bin.core.accessories import prepare_sample_objects_from_dir, set_cpu_count, check_dependencies
-from bin.core.generate_network_chart import generate_network_chart
-from bin.core.mmseqs_wrapper import self_cluster_pipeline, get_core_genome
-from bin.core.pairwise_comparisons import generate_pairwise_gene_match_report
-from bin.core.pick_best_nucleotide import pick_best_nucleotide
-from bin.core.prokka_wrapper import call_prokka, prokka_obj_from_results_dir
-from bin.core.sample_handling import SampleObject
-from bin.core.summary import generate_summary_report, generate_core_gene_count_dict, generate_core_gene_count_report, \
+from centreseq.bin.core.accessories import prepare_sample_objects_from_dir, set_cpu_count, check_dependencies
+from centreseq.bin.core.generate_network_chart import generate_network_chart
+from centreseq.bin.core.mmseqs_wrapper import self_cluster_pipeline, get_core_genome
+from centreseq.bin.core.pairwise_comparisons import generate_pairwise_gene_match_report
+from centreseq.bin.core.pick_best_nucleotide import pick_best_nucleotide
+from centreseq.bin.core.prokka_wrapper import call_prokka, prokka_obj_from_results_dir
+from centreseq.bin.core.sample_handling import SampleObject
+from centreseq.bin.core.summary import generate_summary_report, generate_core_gene_count_dict, \
+    generate_core_gene_count_report, \
     generate_roary_gene_count_dict, generate_roary_gene_count_report
-from bin.core.validate_clusters import filter_core_cluster_tsv
+from centreseq.bin.core.validate_clusters import filter_core_cluster_tsv
 
 __version__ = "0.1.2"
 __authors__ = ["Forest Dussault", "Adrian Verster", "Nicholas Petronella"]

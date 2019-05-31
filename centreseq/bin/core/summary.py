@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from bin.core.accessories import get_fasta_headers
+from centreseq.bin.core import get_fasta_headers
 
 """
 TODO:   Do some sort of check to ensure that the summary report doesn't have any over-represented cluster members,
