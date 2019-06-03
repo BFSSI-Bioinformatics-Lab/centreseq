@@ -1,8 +1,8 @@
 import setuptools
 
-__version__ = '0.1.0'
+__version__ = '0.1.2'
 __author__ = ['Forest Dussault', 'Adrian Verster', 'Nicholas Petronella']
-__email__ = '0.1.0'
+__email__ = 'forest.dussault@canada.ca'
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
