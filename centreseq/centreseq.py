@@ -54,18 +54,18 @@ def convert_to_path(ctx, param, value):
     return Path(value)
 
 
-@click.command(help="Given an input directory containing assemblies, this will establish a core genome through running "
-                    "Prokka and mmseqs2.")
+@click.command(help="Given an input directory containing assemblies, establishes a core genome")
 @click.option('-f', '--fasta-dir',
               type=click.Path(exists=True),
               required=True,
-              help='Path to directory containing *.fasta files to run core pipeline on',
+              help='Path to directory containing *.fasta files for input to the core pipeline',
               callback=convert_to_path)
 @click.option('-o', '--outdir',
               type=click.Path(),
               required=True,
               help='Root directory to store all output files. If this directory already exists, the pipeline will '
-                   'attempt to skip the Prokka step by reading in existing Prokka output.',
+                   'attempt to skip the Prokka step by reading in existing Prokka output, but will overwrite all other '
+                   'existing result files.',
               callback=convert_to_path)
 @click.option('-n', '--n-cpu',
               type=click.INT,
@@ -77,7 +77,7 @@ def convert_to_path(ctx, param, value):
               type=click.INT,
               required=False,
               default=1,
-              help="Number of CPUs for pick_best_nucleotide. You need at least 10GB Ram per CPU.")
+              help="Number of CPUs for pick_best_nucleotide. You need at least 10GB of RAM per CPU.")
 @click.option('-m', '--min-seq-id',
               type=click.FLOAT,
               required=False,
@@ -98,8 +98,7 @@ def convert_to_path(ctx, param, value):
               is_flag=True,
               default=False,
               help='Generate pairwise comparisons of all genomes. '
-                   'This output file is used to generate a network visualization diagram with the non-existent '
-                   'visualization script.')
+                   'This output file can be used to view a network chart of the core genome.')
 @click.option('-v', '--verbose',
               is_flag=True,
               default=False,
@@ -122,11 +121,11 @@ def cli(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq_
     log_dir.mkdir(parents=True)
     main_log_file = log_dir / 'core_pipeline.log'
     if verbose:
-        setup_logger(logger_name='main_log', log_file=main_log_file, title="HardCORE", level=logging.DEBUG)
+        setup_logger(logger_name='main_log', log_file=main_log_file, title="centreseq", level=logging.DEBUG)
         mmseqs_log_file = log_dir / 'mmseqs2.log'
         setup_logger(logger_name='mmseqs_log', log_file=mmseqs_log_file, title="mmseqs2", level=logging.DEBUG)
     else:
-        setup_logger(logger_name='main_log', log_file=main_log_file, title="HardCORE", level=logging.INFO)
+        setup_logger(logger_name='main_log', log_file=main_log_file, title="centreseq", level=logging.INFO)
         mmseqs_log_file = log_dir / 'mmseqs2.log'
         setup_logger(logger_name='mmseqs_log', log_file=mmseqs_log_file, title="mmseqs2", level=logging.INFO)
 
