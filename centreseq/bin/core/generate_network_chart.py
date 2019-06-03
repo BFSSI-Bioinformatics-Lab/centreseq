@@ -6,7 +6,7 @@ D3_V5 = 'https://d3js.org/d3.v5.min.js'
 # D3_SIMPLE_SLIDER = Path(__file__).parents[1] / 'visualizations' / 'static' / 'd3-simple-slider.js'
 D3_SIMPLE_SLIDER = 'https://unpkg.com/d3-simple-slider'
 print(NETWORK_GRAPH_HTML_TEMPLATE)
-assert NETWORK_GRAPH_HTML_TEMPLATE.exists()
+# assert NETWORK_GRAPH_HTML_TEMPLATE.exists()
 
 
 # D3_V5 = '/graph_assets/d3.v5.min.js'
