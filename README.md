@@ -6,22 +6,15 @@ The following must be available in your *$PATH*
 - [muscle](https://www.drive5.com/muscle/)
 
 ### Installation
-1. Clone the repo and navigate to directory
+1. Create a new conda environment
 
 ```
-git clone https://github.com/bfssi-forest-dussault/centreseq.git
-cd centreseq
+conda env create -n centreseq python=3.6
 ```
 
-2. Create a new conda env with the environment.yml file
-
+2. Install via bioconda
 ```
-conda env create -f environment.yml
-```
-
-3. Call the script
-```
-python core_pipeline.py --help
+conda install -c bioconda centreseq  # Coming soon
 ```
 
 ### Usage
