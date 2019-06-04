@@ -27,9 +27,9 @@ __email__ = "forest.dussault@canada.ca"
 def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
-    logging.info(f"Version: {__version__}")
-    logging.info(f"Author: {__authors__}")
-    logging.info(f"Email: {__email__}")
+    print(f"Version\t: {__version__}")
+    print(f"Authors\t: {', '.join(__authors__)}")
+    print(f"Email\t: {__email__}")
     quit()
 
 
