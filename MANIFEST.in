@@ -1,0 +1,4 @@
+include centreseq/bin/visualizations/*
+include centreseq/bin/visualizations/static/*
+include bin/visualizations/*.html
+include bin/visualizations/static/*
