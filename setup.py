@@ -1,6 +1,6 @@
 import setuptools
 
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 __author__ = ['Forest Dussault', 'Adrian Verster', 'Nicholas Petronella']
 __email__ = 'forest.dussault@canada.ca'
 
@@ -9,7 +9,15 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="centreseq",
-    install_requires=['click', 'pandas', 'dataclasses', 'xlsxwriter', 'tqdm', 'biopython'],
+    install_requires=['click>=7.0',
+                      'pandas>=0.23.0',
+                      'dataclasses>=0.6',
+                      'xlsxwriter>=1.1.8',
+                      'tqdm>=2.2.3',
+                      'biopython>=1.70',
+                      'scipy>=1.1',
+                      'pycurl>=7.43'
+                      ],
     python_requires='~=3.6',
     description="Core genome finder",
     long_description=long_description,

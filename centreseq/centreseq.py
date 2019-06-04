@@ -19,7 +19,7 @@ from centreseq.bin.core.summary import generate_summary_report, generate_core_ge
     generate_roary_gene_count_dict, generate_roary_gene_count_report
 from centreseq.bin.core.validate_clusters import filter_core_cluster_tsv
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 __authors__ = ["Forest Dussault", "Adrian Verster", "Nicholas Petronella"]
 __email__ = "forest.dussault@canada.ca"
 
