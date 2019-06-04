@@ -1,6 +1,6 @@
 import setuptools
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 __author__ = ['Forest Dussault', 'Adrian Verster', 'Nicholas Petronella']
 __email__ = 'forest.dussault@canada.ca'
 
@@ -19,7 +19,7 @@ setuptools.setup(
                       'pycurl>=7.43'
                       ],
     python_requires='~=3.6',
-    description="Core genome finder",
+    description="Fast generation of a core genome among bacterial strains",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/bfssi-forest-dussault/centreseq",
