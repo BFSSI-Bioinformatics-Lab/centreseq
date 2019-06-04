@@ -152,8 +152,8 @@ def cli(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq_
 def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq_id: float,
                   coverage_length: float, no_optimize: bool, pairwise: bool):
     main_log = logging.getLogger('main_log')
-    main_log.info(f"Set minimum sequence identity to {min_seq_id}")
-    main_log.info(f"Set minimum coverage to {coverage_length}")
+    main_log.debug(f"minimum sequence identity = {min_seq_id}")
+    main_log.debug(f"minimum coverage = {coverage_length}")
 
     # Prepare [SampleObject]
     sample_object_list = prepare_sample_objects_from_dir(fasta_dir=fasta_dir)
@@ -307,18 +307,15 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
         network_chart = generate_network_chart(pairwise_gene_count_report=pairwise_gene_match_report,
                                                roary_report=roary_gene_count_report,
                                                outdir=outdir)
-        main_log.info(f"To view the report, open a bash terminal, cd to this directory ({outdir}),"
+        main_log.info(f"To view the network graph, open a bash terminal, cd to this directory ({outdir}),"
                       f" then run the following command:\n\t\tpython -m http.server\nThis will start a server."
-                      f" Now you may open {network_chart} in Chrome or Firefox.")
-
+                      f" Now you may open {network_chart} in Chrome, Chromium or Firefox.")
         main_log.info("Done!")
 
 
 def prokka_pipeline(sample: SampleObject, outdir: Path, n_cpu: int, iteration: int):
     """ Run the call_prokka pipeline, and updates corresponding SampleObject instance """
-    main_log = logging.getLogger('main_log')
     prokka_dir = outdir / 'prokka' / sample.sample_id
-    main_log.debug(f"Running prokka on {sample.sample_id}")
     prokka_object = call_prokka(sample_id=sample.sample_id, fasta_path=sample.fasta_path, outdir=prokka_dir,
                                 n_cpu=n_cpu)
     sample.prokka_object = prokka_object
