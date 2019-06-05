@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from centreseq.bin.tree.cluster_data_structures import ClusterVariants
+from bin.tree.cluster_data_structures import ClusterVariants
 
 
 def generate_variant_summary_df(cluster_variants_list: [ClusterVariants]) -> pd.DataFrame:

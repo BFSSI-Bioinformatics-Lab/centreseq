@@ -5,8 +5,6 @@ import pandas as pd
 from cyvcf2.cyvcf2 import VCF
 from dataclasses import dataclass
 
-from centreseq.bin.core.accessories import extract_sequence
-
 main_log = logging.getLogger('main_log')
 
 
@@ -162,3 +160,28 @@ def populate_cluster_object(row: pd.Series, prokka_dir: Path):
                              product=row['product'], n_members=row['n_members'], member_list=member_id_list,
                              prokka_dir=prokka_dir)
     return cluster_object
+
+
+def extract_sequence(fasta: Path, target_contig: str) -> str:
+    """
+    Given an input FASTA file and a target contig, will extract the nucleotide/amino acid sequence
+    and return as a string. Will break out after capturing 1 matching contig.
+    """
+    sequence = ""
+    write_flag = False
+    write_counter = 0
+    with open(str(fasta), 'r') as infile:
+        for line in infile:
+            if write_counter > 1:
+                break
+            if line[0] == ">":  # This is marginally faster than .startswith()
+                if target_contig in line:
+                    write_counter += 1
+                    write_flag = True
+                else:
+                    write_flag = False
+            elif write_flag:
+                sequence += line
+            else:
+                continue
+    return sequence.replace("\n", "")

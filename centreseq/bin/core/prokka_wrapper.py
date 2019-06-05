@@ -4,7 +4,7 @@ from pathlib import Path
 from dataclasses import dataclass
 from collections.__init__ import Counter
 
-from centreseq.bin.core.accessories import run_subprocess
+from bin.core.accessories import run_subprocess
 
 main_log = logging.getLogger('main_log')
 

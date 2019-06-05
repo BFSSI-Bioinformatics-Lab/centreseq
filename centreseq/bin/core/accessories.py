@@ -1,14 +1,10 @@
 import itertools
 import logging
 import multiprocessing
-import shutil
 from functools import wraps
 from pathlib import Path
 from subprocess import PIPE, Popen
 from time import time
-
-from centreseq.bin.core.sample_handling import SampleObject
-from centreseq.config import EXTERNAL_DEPENDENCIES
 
 main_log = logging.getLogger('main_log')
 mmseqs_log = logging.getLogger('mmseqs_log')
@@ -41,20 +37,6 @@ def extract_sample_id_from_fasta(fasta: Path):
     return sample_id
 
 
-def prepare_sample_objects_from_dir(fasta_dir: Path):
-    """
-    Given an input directory containing *.fasta files, creates a SampleObject for each and returns as list
-    :param fasta_dir: Directory containing all *.fasta files for core analysis
-    :return: Sample dictionary containing sample_id:file_path relationships
-    """
-    file_list = list(fasta_dir.glob("*.fasta"))
-    sample_object_list = []
-    for f in file_list:
-        sample_object = SampleObject(sample_id=extract_sample_id_from_fasta(f), fasta_path=f)
-        sample_object_list.append(sample_object)
-    return sample_object_list
-
-
 def get_fasta_headers(fasta: Path) -> list:
     """ Pulls headers any fasta file (e.g. lines starting with >) and returns them as a single list """
     fasta_headers = []
@@ -79,31 +61,6 @@ def set_cpu_count(n_cpu: int = None) -> int:
 def generate_unordered_pairs(sample_list: list):
     """ Creates a list of of all possible unordered pairs of items in a list """
     return list(itertools.combinations(sample_list, 2))
-
-
-def extract_sequence(fasta: Path, target_contig: str) -> str:
-    """
-    Given an input FASTA file and a target contig, will extract the nucleotide/amino acid sequence
-    and return as a string. Will break out after capturing 1 matching contig.
-    """
-    sequence = ""
-    write_flag = False
-    write_counter = 0
-    with open(str(fasta), 'r') as infile:
-        for line in infile:
-            if write_counter > 1:
-                break
-            if line[0] == ">":  # This is marginally faster than .startswith()
-                if target_contig in line:
-                    write_counter += 1
-                    write_flag = True
-                else:
-                    write_flag = False
-            elif write_flag:
-                sequence += line
-            else:
-                continue
-    return sequence.replace("\n", "")
 
 
 def extract_contigs(fasta: Path, gene_list: list, outfile: Path) -> Path:
@@ -192,35 +149,3 @@ def sort_faa(faa: Path):
     run_subprocess(cmd, get_stdout=True)
     faa.unlink()
     return outname
-
-
-def dependency_check(dependency: str) -> bool:
-    """
-    Checks if a given program is present in the user's $PATH
-    :param dependency: String of program name
-    :return: True if program is in $PATH, False if not
-    """
-    check = shutil.which(dependency)
-    if check is not None:
-        return True
-    else:
-        return False
-
-
-def check_dependencies() -> bool:
-    # Dependency check
-    main_log.info("Conducting dependency check...")
-    dependency_dict = dict()
-    for dependency in EXTERNAL_DEPENDENCIES:
-        dependency_dict[dependency] = dependency_check(dependency)
-    if False in dependency_dict.values():
-        main_log.error("ERROR: Cannot locate some dependencies in $PATH...")
-        for key, value in dependency_dict.items():
-            if not value:
-                main_log.error(f"Dependency missing: {key}")
-        return False
-    else:
-        for key, value in dependency_dict.items():
-            main_log.debug(f"Dependency {key}: {value}")
-    main_log.info("Dependencies OK")
-    return True
