@@ -1,6 +1,6 @@
 import setuptools
 
-__version__ = '0.1.5'
+__version__ = '0.2.0'
 __author__ = ['Forest Dussault', 'Adrian Verster', 'Nicholas Petronella']
 __email__ = 'forest.dussault@canada.ca'
 
@@ -16,7 +16,8 @@ setuptools.setup(
                       'tqdm>=2.2.3',
                       'biopython>=1.70',
                       'scipy>=1.1',
-                      'pycurl>=7.43'
+                      'pycurl>=7.43',
+                      'cyvcf2>=0.11.3'
                       ],
     python_requires='~=3.6',
     description="Fast generation of a core genome among bacterial strains",
