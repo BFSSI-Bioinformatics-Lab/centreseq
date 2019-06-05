@@ -36,7 +36,7 @@ def tree_pipeline(summary_report: Path, prokka_dir: Path, outdir: Path, n_cpu: i
 
     # Filter to nth percentile of samples
     n_members_max = np.percentile(df['n_members'], percentile)
-    main_log.debug(f"Filtering DataFrame to contain only rows where n_members >= {n_members_max}")
+    main_log.info(f"Filtering DataFrame to only contain rows where n_members >= {n_members_max}")
     df = df[df['n_members'] >= n_members_max]
 
     filtered_length = len(df)
@@ -49,17 +49,18 @@ def tree_pipeline(summary_report: Path, prokka_dir: Path, outdir: Path, n_cpu: i
     cluster_objects = df.progress_apply(populate_cluster_object, axis=1, args=(prokka_dir,))
 
     # Write extracted sequences to a file for each cluster
-    main_log.debug(f"Writing sequences to cluster files")
+    main_log.info(f"Writing sequences to cluster files")
     aligned_loci_dir = outdir / 'aligned_loci'
     aligned_loci_dir.mkdir(exist_ok=True)
-    for cluster_object in tqdm(cluster_objects):
+    for cluster_object in tqdm(cluster_objects, desc="Writing"):
         cluster_object.generate_cluster_fasta(outdir=aligned_loci_dir)
 
     # Align cluster multi-FASTA files
-    main_log.debug(f"Aligning all cluster files with Muscle")
+    main_log.info(f"Aligning all cluster files with Muscle")
     p = multiprocessing.Pool(processes=n_cpu)
     cluster_fastas = [cluster_object.cluster_fasta for cluster_object in cluster_objects]
-    for _ in tqdm(p.imap_unordered(func=call_muscle, iterable=cluster_fastas), total=len(cluster_fastas)):
+    for _ in tqdm(p.imap_unordered(func=call_muscle, iterable=cluster_fastas), total=len(cluster_fastas),
+                  desc="Muscle"):
         pass
 
     # Call variants with snp-sites, create a ClusterVariants object per variant
@@ -78,11 +79,11 @@ def tree_pipeline(summary_report: Path, prokka_dir: Path, outdir: Path, n_cpu: i
                                     root soft nofile 65535
                                     root hard nofile 65535
     """
-    main_log.debug(f"Calling variants for all aligned clusters")
+    main_log.info(f"Calling variants for clusters")
     vcf_dir = outdir / 'variant_calls'
     vcf_dir.mkdir(exist_ok=True)
     variants_objects = []
-    for cluster_object in tqdm(cluster_objects):
+    for cluster_object in tqdm(cluster_objects, desc="snp-sites"):
         vcf = call_snp_sites(cluster_object.cluster_fasta, vcf_dir)
         if vcf.exists():
             variants = ClusterVariants(parent_cluster=cluster_object, vcf_path=vcf)
