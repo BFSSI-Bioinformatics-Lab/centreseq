@@ -17,7 +17,14 @@ def generate_variant_summary_df(cluster_variants_list: [ClusterVariants]) -> pd.
 
 def generate_variant_detail_df(cluster_variants_list: [ClusterVariants]) -> pd.DataFrame:
     """ Creates a DataFrame containing detailed information on every ClusterVariants object """
-    sample_ids = cluster_variants_list[0].variant_sample_ids
+
+    # Loop through all clusters til we find a valid list of sample IDs
+    sample_ids = []
+    for variants in cluster_variants_list:
+        if len(variants.variant_sample_ids) > 0:
+            sample_ids = variants.variant_sample_ids
+            break
+
     columns = ['cluster', 'cluster_length', 'chrom', 'pos', 'ref', 'alt'] + sample_ids
     rows = []
     for variants in cluster_variants_list:
