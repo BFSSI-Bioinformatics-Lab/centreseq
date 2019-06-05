@@ -7,13 +7,14 @@ core_genome/core_genome_DB.cluster.tsv. It will then create a multifasta file (n
 extract all relevant .faa sequences from cluster_sequences.faa. Maybe also grab sequences of interest from the .ffn in
 the Prokka folder.
 """
-import os
-import click
 import logging
-from numba import jit
+import os
 from pathlib import Path
-from centreseq.bin.core.summary import cluster_tsv_to_df
+
+import click
+
 from centreseq.bin.core.accessories import measure
+from centreseq.bin.core.summary import cluster_tsv_to_df
 
 script = os.path.basename(__file__)
 logger = logging.getLogger()
@@ -107,7 +108,6 @@ def validate_folder_contents(root_dir: Path) -> bool:
     return True
 
 
-@jit
 def get_target_member_list(core_tsv: Path, cluster_representative: str) -> list:
     df = cluster_tsv_to_df(core_tsv)
     df = df[df['cluster_rep'] == cluster_representative]
