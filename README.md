@@ -22,7 +22,7 @@ conda install -c bioconda centreseq  # Coming soon
 
 ### Usage
 ```
-Usage: centreseq.py [OPTIONS] COMMAND [ARGS]...
+Usage: centreseq [OPTIONS] COMMAND [ARGS]...
 
   centreseq builds an annotated core genome using assemblies as input.
 
