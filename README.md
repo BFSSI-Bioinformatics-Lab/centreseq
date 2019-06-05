@@ -1,12 +1,15 @@
 ### External Dependencies
 
-The following must be available in your *$PATH*
+The following must be available in your *$PATH*.
+These programs will be automatically installed with the conda package.
+
 - [Prokka](https://github.com/tseemann/prokka)
 - [mmseqs2](https://github.com/soedinglab/MMseqs2)
+- [seqkit](https://github.com/shenwei356/seqkit)
 - [muscle](https://www.drive5.com/muscle/)
 
 ### Installation
-1. Create a new conda environment
+1. Create a new conda environment (*optional, but strongly recommended*)
 
 ```
 conda env create -n centreseq python=3.6
@@ -19,19 +22,15 @@ conda install -c bioconda centreseq  # Coming soon
 
 ### Usage
 ```
-Usage: centreseq.py [OPTIONS]
+Usage: centreseq.py [OPTIONS] COMMAND [ARGS]...
 
-  Given an input directory containing assemblies, this will establish a core
-  genome through running Prokka and mmseqs2.
+  centreseq builds an annotated core genome using assemblies as input.
 
 Options:
-  -f, --fasta-dir PATH    Path to directory containing *.fasta files to run
-                          core pipeline on  [required]
-  -o, --outdir PATH       Root directory to store all output files  [required]
-  -n, --n-cpu INTEGER     Number of CPUs to dedicate to parallelizable steps
-                          of the pipeline. Will take all available CPUs - 1 if
-                          not specified.
-  -m, --min-seq-id FLOAT  Sets the mmseqs cluster parameter "--min-seq-id".
-                          Defaults to 0.95.
-  --help                  Show this message and exit.
+  --help  Show this message and exit.
+
+Commands:
+  core  Given an input directory containing assemblies, establishes a core
+        genome
+  tree  Produces output for phylogenetic tree software
 ```
