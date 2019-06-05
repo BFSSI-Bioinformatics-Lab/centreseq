@@ -10,7 +10,7 @@ from bin.core.accessories import set_cpu_count
 from bin.core.pipelines import core_pipeline
 from config import check_dependencies
 
-__version__ = "0.1.5"
+__version__ = "0.2.0"
 __authors__ = ["Forest Dussault", "Adrian Verster", "Nicholas Petronella"]
 __email__ = "forest.dussault@canada.ca"
 
