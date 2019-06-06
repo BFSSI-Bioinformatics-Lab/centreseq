@@ -21,6 +21,14 @@ def print_version(ctx, param, value):
     print(f"Version\t: {__version__}")
     print(f"Authors\t: {', '.join(__authors__)}")
     print(f"Email\t: {__email__}")
+    print(f"Source\t: https://github.com/bfssi-forest-dussault/centreseq")
+    quit()
+
+
+def print_citation(ctx, param, value):
+    if not value or ctx.resilient_parsing:
+        return
+    print(f"TBA")
     quit()
 
 
@@ -48,6 +56,7 @@ def convert_to_path(ctx, param, value):
 # Base group for centreseq CLI
 @click.group()
 def centreseq():
+    """ Build a core genome. """
     pass
 
 
@@ -228,7 +237,24 @@ def tree(summary_report: Path, prokka_dir: Path, outdir: Path, percentile: float
                   percentile=percentile)
 
 
+@click.command(cls=click.CommandCollection,
+               sources=[centreseq],
+               help="centreseq builds an annotated core genome using assemblies as input.")
+@click.option('--version',
+              help='Print the version and exit.',
+              is_flag=True,
+              is_eager=True,
+              callback=print_version,
+              expose_value=False)
+@click.option('--citation',
+              help='Print the citation for this software and exit.',
+              is_flag=True,
+              is_eager=True,
+              callback=print_citation,
+              expose_value=False)
+def cli(version, citation):
+    pass
+
+
 if __name__ == "__main__":
-    cli = click.CommandCollection(sources=[centreseq],
-                                  help="centreseq builds an annotated core genome using assemblies as input.")
     cli()
