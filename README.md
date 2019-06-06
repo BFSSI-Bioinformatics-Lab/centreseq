@@ -27,10 +27,13 @@ Usage: centreseq [OPTIONS] COMMAND [ARGS]...
   centreseq builds an annotated core genome using assemblies as input.
 
 Options:
-  --help  Show this message and exit.
+  --version   Print the version and exit.
+  --citation  Print the citation for this software and exit.
+  --help      Show this message and exit.
 
 Commands:
   core  Given an input directory containing assemblies, establishes a core
         genome
   tree  Produces output for phylogenetic tree software
+
 ```
