@@ -25,7 +25,6 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/bfssi-forest-dussault/centreseq",
     include_package_data=True,  # Must be supplemented by MANIFEST.in file containing paths to extra files
-    install_package_data=True,
     packages=setuptools.find_packages(),
     version=__version__,
     author=__author__,
