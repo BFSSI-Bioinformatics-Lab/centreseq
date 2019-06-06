@@ -30,7 +30,7 @@ setuptools.setup(
     author_email=__email__,
     entry_points={
         'console_scripts': [
-            'centreseq=centreseq.centreseq_cli:centreseq'
+            'centreseq=centreseq.centreseq_cli:cli'
         ]
     }
 )
