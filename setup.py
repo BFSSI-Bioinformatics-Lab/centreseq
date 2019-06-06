@@ -1,6 +1,6 @@
 import setuptools
 
-__version__ = '0.2.0'
+__version__ = '0.2.2'
 __author__ = ['Forest Dussault', 'Adrian Verster', 'Nicholas Petronella']
 __email__ = 'forest.dussault@canada.ca'
 
@@ -30,7 +30,7 @@ setuptools.setup(
     author_email=__email__,
     entry_points={
         'console_scripts': [
-            'centreseq=centreseq.centreseq:cli'
+            'centreseq=centreseq.centreseq_cli:centreseq'
         ]
     }
 )
