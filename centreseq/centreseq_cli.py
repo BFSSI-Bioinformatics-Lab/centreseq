@@ -56,7 +56,6 @@ def convert_to_path(ctx, param, value):
 # Base group for centreseq CLI
 @click.group()
 def centreseq():
-    """ Build a core genome. """
     pass
 
 
