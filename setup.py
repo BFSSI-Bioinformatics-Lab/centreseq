@@ -15,8 +15,7 @@ setuptools.setup(
                       'xlsxwriter>=1.1.8',
                       'tqdm>=2.2.3',
                       'biopython>=1.70',
-                      'scipy>=1.1',
-                      'pycurl>=7.43'
+                      'scipy>=1.1'
                       ],
     python_requires='~=3.6',
     description="Fast generation of a core genome among bacterial strains",
