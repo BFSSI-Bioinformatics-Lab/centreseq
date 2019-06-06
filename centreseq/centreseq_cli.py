@@ -10,7 +10,7 @@ from centreseq.bin.core.pipelines import core_pipeline
 from centreseq.bin.tree.tree_pipeline import tree_pipeline
 from centreseq.config import check_dependencies
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 __authors__ = ["Forest Dussault", "Adrian Verster", "Nicholas Petronella"]
 __email__ = "forest.dussault@canada.ca"
 
@@ -82,7 +82,7 @@ def centreseq():
               type=click.INT,
               required=False,
               default=None,
-              help='Number of CPUs to dedicate to parallelizable steps of the pipeline.'
+              help='Number of CPUs to dedicate to parallelizable steps of the pipeline. '
                    'Will take all available CPUs - 1 by default.')
 @click.option('--n-cpu-pickbest',
               type=click.INT,
