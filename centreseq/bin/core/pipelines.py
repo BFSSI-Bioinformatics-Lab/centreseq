@@ -5,16 +5,16 @@ from pathlib import Path
 
 from tqdm import tqdm
 
-from bin.core.accessories import extract_sample_id_from_fasta
-from bin.core.generate_network_chart import generate_network_chart
-from bin.core.mmseqs_wrapper import get_core_genome, self_cluster_pipeline
-from bin.core.pairwise_comparisons import generate_pairwise_gene_match_report
-from bin.core.pick_best_nucleotide import pick_best_nucleotide
-from bin.core.prokka_wrapper import prokka_obj_from_results_dir, call_prokka
-from bin.core.sample_handling import SampleObject
-from bin.core.summary import generate_summary_report, generate_core_gene_count_dict, \
+from centreseq.bin.core.accessories import extract_sample_id_from_fasta
+from centreseq.bin.core.generate_network_chart import generate_network_chart
+from centreseq.bin.core.mmseqs_wrapper import get_core_genome, self_cluster_pipeline
+from centreseq.bin.core.pairwise_comparisons import generate_pairwise_gene_match_report
+from centreseq.bin.core.pick_best_nucleotide import pick_best_nucleotide
+from centreseq.bin.core.prokka_wrapper import prokka_obj_from_results_dir, call_prokka
+from centreseq.bin.core.sample_handling import SampleObject
+from centreseq.bin.core.summary import generate_summary_report, generate_core_gene_count_dict, \
     generate_core_gene_count_report, generate_roary_gene_count_dict, generate_roary_gene_count_report
-from bin.core.validate_clusters import filter_core_cluster_tsv
+from centreseq.bin.core.validate_clusters import filter_core_cluster_tsv
 
 
 def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq_id: float,

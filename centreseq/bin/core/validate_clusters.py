@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from bin.core.summary import cluster_tsv_to_df, get_cluster_member_dict
+from centreseq.bin.core.summary import cluster_tsv_to_df, get_cluster_member_dict
 
 log = logging.getLogger('main_log')
 

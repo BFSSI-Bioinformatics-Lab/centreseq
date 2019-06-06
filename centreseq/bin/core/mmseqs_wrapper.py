@@ -3,8 +3,8 @@ from pathlib import Path
 
 from dataclasses import dataclass
 
-from bin.core.accessories import run_subprocess, concatenate_faa, sort_faa, log_mmseqs_output
-from bin.core.sample_handling import SampleObject
+from centreseq.bin.core.accessories import run_subprocess, concatenate_faa, sort_faa, log_mmseqs_output
+from centreseq.bin.core.sample_handling import SampleObject
 
 
 # TODO: Log all of the stdout/stderr of mmseqs calls if --verbose mode is on

@@ -1,5 +1,3 @@
-# coding=utf-8
-
 import copy
 import csv
 import gzip
@@ -19,7 +17,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from bin.core.accessories import run_subprocess
+from centreseq.bin.core.accessories import run_subprocess
 
 main_log = logging.getLogger('main_log')
 

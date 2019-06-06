@@ -5,12 +5,12 @@ from pathlib import Path
 
 import click
 
-import bin.tree.tree_pipeline as tree_pipeline
-from bin.core.accessories import set_cpu_count
-from bin.core.pipelines import core_pipeline
-from config import check_dependencies
+from centreseq.bin.core.accessories import set_cpu_count
+from centreseq.bin.core.pipelines import core_pipeline
+from centreseq.bin.tree.tree_pipeline import tree_pipeline
+from centreseq.config import check_dependencies
 
-__version__ = "0.2.0"
+__version__ = "0.2.2"
 __authors__ = ["Forest Dussault", "Adrian Verster", "Nicholas Petronella"]
 __email__ = "forest.dussault@canada.ca"
 
@@ -221,11 +221,11 @@ def tree(summary_report: Path, prokka_dir: Path, outdir: Path, percentile: float
     main_log.debug(f"verbose: {verbose}")
 
     # Call the pipeline
-    tree_pipeline.tree_pipeline(summary_report=summary_report,
-                                prokka_dir=prokka_dir,
-                                outdir=outdir,
-                                n_cpu=n_cpu,
-                                percentile=percentile)
+    tree_pipeline(summary_report=summary_report,
+                  prokka_dir=prokka_dir,
+                  outdir=outdir,
+                  n_cpu=n_cpu,
+                  percentile=percentile)
 
 
 if __name__ == "__main__":
