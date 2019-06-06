@@ -10,14 +10,13 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="centreseq",
     install_requires=['click>=7.0',
-                      'pandas>=0.23.0',
+                      'pandas>=0.24.0',
                       'dataclasses>=0.6',
                       'xlsxwriter>=1.1.8',
                       'tqdm>=2.2.3',
                       'biopython>=1.70',
                       'scipy>=1.1',
-                      'pycurl>=7.43',
-                      'cyvcf2>=0.11.3'
+                      'pycurl>=7.43'
                       ],
     python_requires='~=3.6',
     description="Fast generation of a core genome among bacterial strains",
