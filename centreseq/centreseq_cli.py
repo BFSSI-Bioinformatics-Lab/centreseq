@@ -244,14 +244,16 @@ def tree(summary_report: Path, prokka_dir: Path, outdir: Path, percentile: float
               is_flag=True,
               is_eager=True,
               callback=print_version,
+              default=False,
               expose_value=False)
 @click.option('--citation',
               help='Print the citation for this software and exit.',
               is_flag=True,
               is_eager=True,
               callback=print_citation,
+              default=False,
               expose_value=False)
-def cli(version, citation):
+def cli():
     pass
 
 
