@@ -10,7 +10,7 @@ from centreseq.bin.core.pipelines import core_pipeline
 from centreseq.bin.tree.tree_pipeline import tree_pipeline
 from centreseq.config import check_dependencies
 
-__version__ = "0.2.2"
+__version__ = "0.2.3"
 __authors__ = ["Forest Dussault", "Adrian Verster", "Nicholas Petronella"]
 __email__ = "forest.dussault@canada.ca"
 
