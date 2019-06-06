@@ -1,13 +1,3 @@
-### External Dependencies
-
-The following must be available in your *$PATH*.
-These programs will be automatically installed with the conda package.
-
-- [Prokka](https://github.com/tseemann/prokka)
-- [mmseqs2](https://github.com/soedinglab/MMseqs2)
-- [seqkit](https://github.com/shenwei356/seqkit)
-- [muscle](https://www.drive5.com/muscle/)
-
 ### Installation
 1. Create a new conda environment (*optional, but strongly recommended*)
 
@@ -36,3 +26,14 @@ Commands:
         genome
   tree  Produces output for phylogenetic tree software
 ```
+
+### External Dependencies
+
+These programs will be automatically installed with the conda package.
+
+- [Prokka](https://github.com/tseemann/prokka)
+- [mmseqs2](https://github.com/soedinglab/MMseqs2)
+- [seqkit](https://github.com/shenwei356/seqkit)
+- [muscle](https://www.drive5.com/muscle/)
+- [snp-sites](https://github.com/sanger-pathogens/snp-sites)
+- [cyvcf2](https://github.com/brentp/cyvcf2)
