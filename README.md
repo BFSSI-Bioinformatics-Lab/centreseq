@@ -35,5 +35,4 @@ Commands:
   core  Given an input directory containing assemblies, establishes a core
         genome
   tree  Produces output for phylogenetic tree software
-
 ```
