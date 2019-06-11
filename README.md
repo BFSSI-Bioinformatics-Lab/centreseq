@@ -3,11 +3,12 @@
 
 ```
 conda env create -n centreseq python=3.6
+conda activate centreseq
 ```
 
 2. Install via bioconda
 ```
-conda install -c bioconda centreseq  # Coming soon
+conda install -c bioconda centreseq
 ```
 
 ### Usage
