@@ -14,13 +14,6 @@ conda activate centreseq
 conda install -c bioconda centreseq
 ```
 
-OR
-
-Install with docker
-```
-docker pull quay.io/biocontainers/centreseq:<tag>
-```
-
 ### Usage
 ```
 Usage: centreseq [OPTIONS] COMMAND [ARGS]...
