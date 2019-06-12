@@ -1,3 +1,6 @@
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat)](http://bioconda.github.io/recipes/centreseq/README.html)
+
+
 ### Installation
 1. Create a new conda environment (*optional, but strongly recommended*)
 
@@ -9,6 +12,13 @@ conda activate centreseq
 2. Install via bioconda
 ```
 conda install -c bioconda centreseq
+```
+
+OR
+
+Install with docker
+```
+docker pull quay.io/biocontainers/centreseq:<tag>
 ```
 
 ### Usage
