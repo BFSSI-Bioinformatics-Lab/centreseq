@@ -143,7 +143,11 @@ def concatenate_faa(*args: [Path], outname: Path):
 
 
 def sort_faa(faa: Path):
-    """ Sorts input .faa file by length, creates a new sorted version, delete original """
+    """
+    Sorts input .faa file by length, creates a new sorted version, delete original
+    # TODO: Implement this myself instead of using seqkit
+    # TODO: Should be very easy to do (sequences to dictionary {header:seq} -> sort keys -> write to file)
+    """
     outname = faa.with_suffix(".sorted.faa")
     cmd = f"seqkit sort --by-length --reverse {faa} > {outname}"
     run_subprocess(cmd, get_stdout=True)
