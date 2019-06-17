@@ -6,15 +6,9 @@ import pandas as pd
 
 from centreseq.bin.core.accessories import get_fasta_headers
 
-"""
-TODO:   Do some sort of check to ensure that the summary report doesn't have any over-represented cluster members,
-        i.e. a cluster that has > 1 sequence belonging to a single sample
-"""
-
 
 def cluster_tsv_to_df(cluster_tsv: Path) -> pd.DataFrame:
-    df = pd.read_csv(cluster_tsv, sep="\t", header=None,
-                     names=("cluster_rep", "cluster_member"), low_memory=False)
+    df = pd.read_csv(cluster_tsv, sep="\t", header=None, names=("cluster_rep", "cluster_member"), low_memory=False)
     return df
 
 
@@ -194,7 +188,6 @@ def generate_roary_gene_count_report(roary_gene_count_dict: dict, outdir: Path, 
                                      min_seq_id: float) -> Path:
     """
     Equivalent of summary_statistics.txt from a Roary run
-    # TODO: Add line saying the -c and -m values that were used to generate this report
     """
     roary_gene_count_report = outdir / 'roary_gene_count_report.txt'
     if roary_gene_count_report.exists():
@@ -214,7 +207,6 @@ def generate_roary_gene_count_report(roary_gene_count_dict: dict, outdir: Path, 
 
 def generate_core_gene_count_report(core_gene_count_dict: dict, outdir: Path, coverage_length: float,
                                     min_seq_id: float) -> Path:
-    # TODO: Add line saying the -c and -m values that were used to generate this report
     core_gene_count_report = outdir / 'core_gene_count_report.txt'
     if core_gene_count_report.exists():
         core_gene_count_report.unlink()
