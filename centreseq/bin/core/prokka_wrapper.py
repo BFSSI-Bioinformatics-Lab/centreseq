@@ -91,6 +91,7 @@ def prokka_obj_from_results_dir(prokka_dir: Path) -> ProkkaObject:
                        f"This may be a result of input filenames that are too long for Prokka to manage. "
                        f"Additionally, contig names must be <= 37 characters.")
         prokka_object = ProkkaObject(faa=None, ffn=None, tsv=None)
+        quit()  # TODO: Test if this is the desired behaviour. Probably best to just fail out of the program here...
         return prokka_object
     return prokka_object
 
