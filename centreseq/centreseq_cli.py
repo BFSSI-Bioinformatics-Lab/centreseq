@@ -87,7 +87,7 @@ def centreseq():
 @click.option('--n-cpu-pickbest',
               type=click.INT,
               required=False,
-              default=1,
+              default=2,
               help="Number of CPUs for pick_best_nucleotide. You need at least 10GB of RAM per CPU.")
 @click.option('-m', '--min-seq-id',
               type=click.FLOAT,
