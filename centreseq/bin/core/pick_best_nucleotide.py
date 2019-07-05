@@ -363,7 +363,7 @@ def pick_best_nucleotide(summary_report: Path, indir: Path, outdir: Path, n_cpu:
 
     # First determine those genes that need to be changed at all. This is quick and
     to_change = []
-    for i in tqdm.tqdm(range(df_preliminary.shape[0]), desc="Identifying core genes that require changing"):
+    for i in tqdm.tqdm(range(df_preliminary.shape[0]), desc="Finding clusters to improve"):
         pg_list = df_preliminary.iloc[i, 4:].tolist()
         update = load_pangenome_list(pg_list)
         if update:
@@ -372,7 +372,7 @@ def pick_best_nucleotide(summary_report: Path, indir: Path, outdir: Path, n_cpu:
     # Multiprocessing change the core genes
 
     pool = Pool(n_cpu)
-    pbar = tqdm.tqdm(total=len(to_change), desc="Changing core genes")
+    pbar = tqdm.tqdm(total=len(to_change), desc="Changing cluster reps")
     for i in to_change:
         pool.apply_async(pick, args=(i,), callback=update_results)
 
@@ -386,23 +386,24 @@ def pick_best_nucleotide(summary_report: Path, indir: Path, outdir: Path, n_cpu:
     return out_report, to_change_names
 
 
-if __name__ == "__main__":
-    # pick_best_nucleotide(Path('/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/summary_report.csv'),Path("/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/"),Path("/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/"))
-    # qwe
-    indir_ = "/mnt/Freya/Analysis/GenomeSimilarity/1250-Vibrio_HardCORE/"
-    picker_ = PickBestNucleotide(indir=indir_)
-
-    summary_report_ = indir_ + 'summary_report.csv'
-
-    df_preliminary_ = pd.read_csv(summary_report_, sep="\t")
-    for i_ in [190]:
-        print(i_)
-        pg_list_ = df_preliminary_.iloc[i_, 4:].tolist()
-        picker_.load_pangenome_list(pg_list_)
-        if picker_.update:
-            picker_.find_medoid()
-        print(df_preliminary_.iloc[i_, 0])
-        print("Before {}: After: {}".format(picker_.cluster_pre[1], picker_.cluster_post[1]))
-        print(picker_.cluster_post != picker_.cluster_pre)
-        print(picker_.medoid)
-        print(picker_.cluster_post)
+# if __name__ == "__main__":
+#     # pick_best_nucleotide(Path('/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/summary_report.csv'),
+#     Path("/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/"),Path("/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/"))
+#     # qwe
+#     indir_ = "/mnt/Freya/Analysis/GenomeSimilarity/1250-Vibrio_HardCORE/"
+#     picker_ = PickBestNucleotide(indir=indir_)
+#
+#     summary_report_ = indir_ + 'summary_report.csv'
+#
+#     df_preliminary_ = pd.read_csv(summary_report_, sep="\t")
+#     for i_ in [190]:
+#         print(i_)
+#         pg_list_ = df_preliminary_.iloc[i_, 4:].tolist()
+#         picker_.load_pangenome_list(pg_list_)
+#         if picker_.update:
+#             picker_.find_medoid()
+#         print(df_preliminary_.iloc[i_, 0])
+#         print("Before {}: After: {}".format(picker_.cluster_pre[1], picker_.cluster_post[1]))
+#         print(picker_.cluster_post != picker_.cluster_pre)
+#         print(picker_.medoid)
+#         print(picker_.cluster_post)
