@@ -72,6 +72,10 @@
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://unpkg.com/d3-simple-slider"></script>
 
+<!--Colour libraries-->
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+
 <!-- Bootstrap -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -86,7 +90,7 @@
 <!-- Network chart -->
 <script>
     function load_roary_report(report_path) {
-        console.log("Roary Report Path: " + report_path);
+        // console.log("Roary Report Path: " + report_path);
         return d3.text(report_path)
             .then(function (text) {
                 return d3.tsvParseRows(text);
@@ -96,7 +100,6 @@
                 return error;
             })
     }
-
 
     // Load the Roary report and populate .data-info
     roary_report = load_roary_report('ROARY_GENE_COUNT_REPORT_VARIABLE');
@@ -143,12 +146,18 @@
 
     d3.select('p#value-fill').text(d3.format('.2%')(sliderFill.value()));
 
-    d3.tsv('PAIRWISE_GENE_COUNT_REPORT_TSV')
-        .then(function (data) {
-            console.log("Pairwise Gene Count Report Path: " + 'PAIRWISE_GENE_COUNT_REPORT_TSV');
+
+    let pair_promise = d3.tsv('PAIRWISE_GENE_COUNT_REPORT_TSV');
+    let network_promise = d3.tsv('NETWORK_CODING');
+
+    Promise.all([pair_promise, network_promise])
+        .then(function (values) {
+            data = values[0];
+            network_coding = values[1];
+            // console.log("Pairwise Gene Count Report Path: " + 'PAIRWISE_GENE_COUNT_REPORT_TSV');
 
             // Network graph size
-            var margin = {
+            let margin = {
                     top: 20,
                     right: 40,
                     bottom: 20,
@@ -160,16 +169,8 @@
             // Pull cutoff value from the slider
             percent_cutoff = $("g.parameter-value")[0].textContent;
 
-            // Prepping data for the network graph (Source: https://bl.ocks.org/heybignick/3faf257bbbbc7743bb72310d03b86ee8)
-            // Grab all unique sample names
-            let sample_names = [];
-            for (i = 0; i < data.length; i++) {
-                sample_names.push(data[i].sample_1);
-                sample_names.push(data[i].sample_2);
-            }
-            sample_names = [...new Set(sample_names)];
-
-            // console.log(graph);
+            // Create color scale
+            let colourScale = d3.scaleOrdinal(d3.schemeCategory10);
 
             // Prepare network graph
             var svg = d3.select("#network-svg")
@@ -198,7 +199,7 @@
                 .attr("class", "everything");
 
             // Create graph object
-            graph = establish_graph_object(sample_names, data, percent_cutoff);
+            let graph = establish_graph_object(network_coding, data, percent_cutoff);
 
             var link = g.append("g")
                 .attr("class", "links")
@@ -215,8 +216,15 @@
                 .data(graph.nodes)
                 .enter().append("g")
 
+            // TODO: Add a .style("fill" function(d){return colourScale(d.group}) call to colour according to group
             var circles = node.append("circle")
                 .attr("r", 4)
+                .attr("group-id", function (d) {
+                    return d.group_id
+                })
+                .style("fill", function (d) {
+                    return colourScale(d3.select(this).attr("group-id"));
+                })
                 .call(d3.drag()
                     .on("start", dragstarted)
                     .on("drag", dragged)
@@ -257,7 +265,7 @@
 
             // Enable the update button
             $("#updateButton").click(function () {
-                update_graph(svg, sample_names, data, percent_cutoff);
+                update_graph(svg, network_coding, data, percent_cutoff);
             })
 
             function ticked() {
@@ -349,10 +357,9 @@
                     });
             }
 
-            function update_graph(svg, sample_names, data, percent_cutoff) {
+            function update_graph(svg, network_coding, data, percent_cutoff) {
                 // Get new data
-                graph = establish_graph_object(sample_names, data, percent_cutoff);
-                // console.log(graph);
+                let graph = establish_graph_object(network_coding, data, percent_cutoff);
 
                 svg.selectAll("*").remove();
 
@@ -390,8 +397,15 @@
                     .data(graph.nodes)
                     .enter().append("g")
 
+                // TODO: Add a .attr("style='fill:rgb(0,0,0)'") according to the group assignment
                 circles = node.append("circle")
                     .attr("r", 4)
+                    .attr("group-id", function (d) {
+                        return d.group_id
+                    })
+                    .style("fill", function (d) {
+                        return colourScale(d3.select(this).attr("group-id"));
+                    })
                     .call(d3.drag()
                         .on("start", dragstarted)
                         .on("drag", dragged)
@@ -435,14 +449,15 @@
             console.log(error);
         })
 
-    function establish_graph_object(sample_names, data, percent_cutoff) {
-        // Establish nodes object from sample_names
+    function establish_graph_object(network_coding, data, percent_cutoff) {
+        // Establish nodes object from network_coding
         let nodes = [];
-        for (i = 0; i < sample_names.length; i++) {
+        network_coding.forEach(function(d){
             nodes.push({
-                'id': sample_names[i]
-            });
-        }
+                'id': d.sample_id,
+                'group_id': d.group_id
+            })
+        });
 
         // Establish links object from loaded data - match_percentage must exceed percent_cutoff for samples to be linked
         let links = [];
