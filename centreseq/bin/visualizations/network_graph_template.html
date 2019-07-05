@@ -151,8 +151,8 @@
 
     Promise.all([pair_promise, network_promise])
         .then(function (values) {
-            data = values[0];
-            network_coding = values[1];
+            let data = values[0];
+            let network_coding = values[1];
             // console.log("Pairwise Gene Count Report Path: " + 'PAIRWISE_GENE_COUNT_REPORT_TSV');
 
             // Network graph size
@@ -166,7 +166,7 @@
                 height = 580 - margin.top - margin.bottom;
 
             // Pull cutoff value from the slider
-            let percent_cutoff = $("g.parameter-value")[0].textContent;
+            percent_cutoff = $("g.parameter-value")[0].textContent;
 
             // Create color scale
             let colourScale = d3.scaleOrdinal(d3.schemeCategory10);
