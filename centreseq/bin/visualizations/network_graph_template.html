@@ -216,7 +216,6 @@
                 .data(graph.nodes)
                 .enter().append("g")
 
-            // TODO: Add a .style("fill" function(d){return colourScale(d.group}) call to colour according to group
             var circles = node.append("circle")
                 .attr("r", 4)
                 .attr("group-id", function (d) {
@@ -397,7 +396,6 @@
                     .data(graph.nodes)
                     .enter().append("g")
 
-                // TODO: Add a .attr("style='fill:rgb(0,0,0)'") according to the group assignment
                 circles = node.append("circle")
                     .attr("r", 4)
                     .attr("group-id", function (d) {
