@@ -98,7 +98,7 @@ def tree_pipeline(summary_report: Path, prokka_dir: Path, outdir: Path, n_cpu: i
     write_tsv_from_df(df=variant_summary_df, outpath=outdir / 'variants_summary.tsv')
     write_tsv_from_df(df=variant_detail_df, outpath=outdir / 'variants_detail.tsv')
 
-    # Concatenate all core genes into a file to feed into RAXml
+    # Concatenate all core genes into a file to feed into tree software e.g. RAXml
     main_log.debug(f"Concatenating core gene files")
     concatenated_sequence_dir = outdir / 'concatenated_sequences'
     concatenated_sequence_dir.mkdir(exist_ok=True)
