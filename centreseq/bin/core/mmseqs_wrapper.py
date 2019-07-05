@@ -1,8 +1,6 @@
 import shutil
 from pathlib import Path
-
 from dataclasses import dataclass
-
 from centreseq.bin.core.accessories import run_subprocess, concatenate_faa, sort_faa, log_mmseqs_output
 from centreseq.bin.core.sample_handling import SampleObject
 
@@ -155,7 +153,7 @@ def call_mmseqs_createseqfiledb(database: Path, cluster_database: Path, outdir: 
 
 
 def self_cluster_pipeline(fasta: Path, outdir: Path, n_cpu: int, min_seq_id: float,
-                          coverage_length: float, iterations: int) -> MMseqsObject:
+                          coverage_length: float) -> MMseqsObject:
     """ Takes a FASTA file and clusters the sequences within it with mmseqs linclust"""
 
     # 1. Convert FASTA into mmseqs database format
