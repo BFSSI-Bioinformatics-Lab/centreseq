@@ -101,6 +101,7 @@
             })
     }
 
+    // TODO: Use the core_gene_count_report.txt file instead
     // Load the Roary report and populate .data-info
     roary_report = load_roary_report('ROARY_GENE_COUNT_REPORT_VARIABLE');
     roary_report.then(function (data) {
@@ -119,9 +120,8 @@
     });
 
     // Generate the slider (from https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518)
-    var slider_ticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0];
-    var sliderFill = d3
-        .sliderBottom()
+    let slider_ticks = [0, 0.2, 0.4, 0.6, 0.8, 1.0];
+    let sliderFill = d3.sliderBottom()
         .min(d3.min(slider_ticks))
         .max(d3.max(slider_ticks))
         .width(300)
@@ -134,7 +134,7 @@
             percent_cutoff = val * 100;
         });
 
-    var gFill = d3
+    let gFill = d3
         .select('div#slider-fill')
         .append('svg')
         .attr('width', 500)
@@ -145,7 +145,6 @@
     gFill.call(sliderFill);
 
     d3.select('p#value-fill').text(d3.format('.2%')(sliderFill.value()));
-
 
     let pair_promise = d3.tsv('PAIRWISE_GENE_COUNT_REPORT_TSV');
     let network_promise = d3.tsv('NETWORK_CODING');
@@ -167,24 +166,24 @@
                 height = 580 - margin.top - margin.bottom;
 
             // Pull cutoff value from the slider
-            percent_cutoff = $("g.parameter-value")[0].textContent;
+            let percent_cutoff = $("g.parameter-value")[0].textContent;
 
             // Create color scale
             let colourScale = d3.scaleOrdinal(d3.schemeCategory10);
 
             // Prepare network graph
-            var svg = d3.select("#network-svg")
+            let svg = d3.select("#network-svg")
                 .append('svg')
                 .attr("width", width)
                 .attr("height", height)
                 .attr("transform", "translate(" + margin.left + "," + 0 + ")");
 
-            var attractForce = d3.forceManyBody().strength(-10).distanceMax(100).distanceMin(10);
-            var repelForce = d3.forceManyBody().strength(-100).distanceMax(30).distanceMin(1);
-            var chargeForce = d3.forceManyBody().strength(-10);
-            var centerForce = d3.forceCenter(width / 2, height / 2);
+            let attractForce = d3.forceManyBody().strength(-10).distanceMax(100).distanceMin(10);
+            let repelForce = d3.forceManyBody().strength(-100).distanceMax(30).distanceMin(1);
+            let chargeForce = d3.forceManyBody().strength(-10);
+            let centerForce = d3.forceCenter(width / 2, height / 2);
 
-            var simulation = d3.forceSimulation()
+            let simulation = d3.forceSimulation()
                 .force("link", d3.forceLink().id(function (d) {
                     return d.id;
                 }))
@@ -195,13 +194,13 @@
                 .force("repelForce", repelForce);
 
             //add encompassing group for the zoom
-            var g = svg.append("g")
+            let g = svg.append("g")
                 .attr("class", "everything");
 
             // Create graph object
             let graph = establish_graph_object(network_coding, data, percent_cutoff);
 
-            var link = g.append("g")
+            let link = g.append("g")
                 .attr("class", "links")
                 .selectAll("line")
                 .data(graph.links)
@@ -210,13 +209,13 @@
                     return Math.sqrt(d.value / 4);
                 });
 
-            var node = g.append("g")
+            let node = g.append("g")
                 .attr("class", "nodes")
                 .selectAll("g")
                 .data(graph.nodes)
-                .enter().append("g")
+                .enter().append("g");
 
-            var circles = node.append("circle")
+            let circles = node.append("circle")
                 .attr("r", 4)
                 .attr("group-id", function (d) {
                     return d.group_id
@@ -246,10 +245,10 @@
                 .nodes(graph.nodes)
                 .on("tick", ticked);
 
-            simulation.force("link").links(graph.links)
+            simulation.force("link").links(graph.links);
 
             //add drag capabilities
-            var drag_handler = d3.drag()
+            let drag_handler = d3.drag()
                 .on("start", drag_start)
                 .on("drag", drag_drag)
                 .on("end", drag_end);
@@ -257,7 +256,7 @@
             drag_handler(node);
 
             //add zoom capabilities
-            var zoom_handler = d3.zoom()
+            let zoom_handler = d3.zoom()
                 .on("zoom", zoom_actions);
 
             zoom_handler(svg);
@@ -265,7 +264,7 @@
             // Enable the update button
             $("#updateButton").click(function () {
                 update_graph(svg, network_coding, data, percent_cutoff);
-            })
+            });
 
             function ticked() {
                 link
@@ -394,7 +393,7 @@
                     .attr("class", "nodes")
                     .selectAll("g")
                     .data(graph.nodes)
-                    .enter().append("g")
+                    .enter().append("g");
 
                 circles = node.append("circle")
                     .attr("r", 4)
@@ -425,7 +424,7 @@
                     .nodes(graph.nodes)
                     .on("tick", ticked);
 
-                simulation.force("link").links(graph.links)
+                simulation.force("link").links(graph.links);
 
                 //add drag capabilities
                 drag_handler = d3.drag()
@@ -445,12 +444,12 @@
         })
         .catch(function (error) {
             console.log(error);
-        })
+        });
 
     function establish_graph_object(network_coding, data, percent_cutoff) {
         // Establish nodes object from network_coding
         let nodes = [];
-        network_coding.forEach(function(d){
+        network_coding.forEach(function (d) {
             nodes.push({
                 'id': d.sample_id,
                 'group_id': d.group_id
@@ -470,10 +469,6 @@
         });
 
         // Combine links and nodes into one object
-        let graph = {
-            nodes,
-            links
-        };
-        return graph;
+        return {nodes, links};
     }
 </script>
