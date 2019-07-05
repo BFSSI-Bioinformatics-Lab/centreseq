@@ -11,55 +11,21 @@ import logging
 import os
 from pathlib import Path
 
-import click
-
-from centreseq.bin.core.accessories import measure
 from centreseq.bin.core.summary import cluster_tsv_to_df
 
-script = os.path.basename(__file__)
-logger = logging.getLogger()
-logging.basicConfig(
-    format=f'\033[92m \033[1m {script} %(levelname)s:\033[0m %(message)s ',
-    level=logging.INFO)
 
-
-def convert_to_path(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    return Path(value)
-
-
-@click.command(help="Given the path to the HardCORE pipeline root directory and the ID of a cluster representative, "
-                    "will create a multi-FASTA containing the sequences for all members of that cluster. Generates "
-                    "both an .ffn and .faa file.")
-@click.option('-i', '--input_dir',
-              type=click.Path(exists=True),
-              required=True,
-              help='Path to your HardCORE output directory',
-              callback=convert_to_path)
-@click.option('-o', '--out_dir',
-              type=click.Path(exists=False),
-              required=True,
-              help='Root directory to store all output files',
-              callback=convert_to_path)
-@click.option('-c', '--cluster_representative',
-              type=click.STRING,
-              required=False,
-              default=None,
-              help='Name of the target cluster representative e.g. "Typhi.2299.BMH_00195"')
-@measure
-def cli(input_dir: Path, out_dir: Path, cluster_representative: str):
+def extract_rep_multifasta(indir: Path, outdir: Path, cluster_representative: str):
     logging.info(f"Extracting member sequences for {cluster_representative}...")
 
     # Setup
-    core_dir = input_dir / 'core_genome'
-    core_tsv = core_dir / 'core_genome_DB.cluster.tsv'
-    out_faa = out_dir / f"{cluster_representative}_cluster_sequences.faa"
-    out_ffn = out_dir / f"{cluster_representative}_cluster_sequences.ffn"
+    core_dir = indir / 'core_genome'
+    core_tsv = core_dir / 'master_genome.cluster.tsv'
+    out_faa = outdir / f"{cluster_representative}_cluster_sequences.faa"
+    out_ffn = outdir / f"{cluster_representative}_cluster_sequences.ffn"
 
     # Validation
-    if validate_folder_contents(input_dir) is False:
-        raise Exception("FAILED: Provided HardCORE directory does not match expected structure.")
+    if validate_folder_contents(indir) is False:
+        raise Exception("FAILED: Provided centreseq directory does not match expected structure.")
 
     # Delete files if they already exist
     if out_faa.exists():
@@ -68,7 +34,7 @@ def cli(input_dir: Path, out_dir: Path, cluster_representative: str):
         os.remove(str(out_ffn))
 
     # Make out_dir
-    os.makedirs(str(out_dir), exist_ok=True)
+    os.makedirs(str(outdir), exist_ok=True)
 
     # List of cluster member sequence IDs
     member_list = get_target_member_list(core_tsv, cluster_representative)
@@ -80,7 +46,7 @@ def cli(input_dir: Path, out_dir: Path, cluster_representative: str):
     member_dict = dict(zip(member_sample_name_list, member_list))
 
     # Get prokka dir for each
-    prokka_dir = input_dir / 'prokka'
+    prokka_dir = indir / 'prokka'
     for sample_name, member in member_dict.items():
         sample_prokka_dir = prokka_dir / sample_name
         try:
@@ -91,14 +57,14 @@ def cli(input_dir: Path, out_dir: Path, cluster_representative: str):
             raise e
         extract_contigs(contigs=faa, target_contig=member, outfile=out_faa)
         extract_contigs(contigs=ffn, target_contig=member, outfile=out_ffn)
-    logging.info(f"Done! Results available at {out_dir}")
+    logging.info(f"Done! Results available at {outdir}")
 
 
 def validate_folder_contents(root_dir: Path) -> bool:
     prokka_dir = root_dir / 'prokka'
     core_dir = root_dir / 'core_genome'
     mmseqs_dir = root_dir / 'mmseqs2'
-    core_tsv = core_dir / 'master_genome_DB.cluster.tsv'
+    core_tsv = core_dir / 'master_genome.cluster.tsv'
     dir_list = [prokka_dir, core_dir, mmseqs_dir]
     dir_check_list = [d.is_dir() for d in dir_list]
     if False in dir_check_list:
@@ -134,7 +100,3 @@ def extract_contigs(contigs: Path, target_contig: str, outfile: Path) -> Path:
                 continue
         outfile_.close()
     return outfile
-
-
-if __name__ == "__main__":
-    cli()
