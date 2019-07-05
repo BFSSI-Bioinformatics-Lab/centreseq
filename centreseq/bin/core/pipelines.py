@@ -6,7 +6,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 from centreseq.bin.core.accessories import extract_sample_id_from_fasta
-from centreseq.bin.core.generate_network_chart import generate_network_chart
+from centreseq.bin.core.generate_network_chart import generate_network_chart, generate_network_chart_coding_file
 from centreseq.bin.core.mmseqs_wrapper import get_core_genome, self_cluster_pipeline
 from centreseq.bin.core.pairwise_comparisons import generate_pairwise_gene_match_report
 from centreseq.bin.core.pick_best_nucleotide import pick_best_nucleotide
@@ -174,12 +174,18 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
         main_log.info(f"Pairwise comparison report available at {pairwise_gene_match_report}")
 
         main_log.info(f"Generating network visualization file")
+        sample_id_list = [x.sample_id for x in sample_object_list]
+        network_coding = generate_network_chart_coding_file(outdir=outdir, sample_id_list=sample_id_list)
         network_chart = generate_network_chart(pairwise_gene_count_report=pairwise_gene_match_report,
+                                               network_coding=network_coding,
                                                roary_report=roary_gene_count_report,
                                                outdir=outdir)
         main_log.info(f"To view the network graph, open a bash terminal, cd to this directory ({outdir}),"
                       f" then run the following command:\n\t\tpython -m http.server\nThis will start a server."
                       f" Now you may open {network_chart} in Chrome, Chromium or Firefox.")
+        main_log.info(f"Coding file for network graph available at {network_coding}."
+                      f"You can change the values in the group_id column to alter the "
+                      f"colouration of the network chart.")
         main_log.info("Done!")
 
 
