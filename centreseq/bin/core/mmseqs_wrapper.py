@@ -7,9 +7,6 @@ from centreseq.bin.core.accessories import run_subprocess, concatenate_faa, sort
 from centreseq.bin.core.sample_handling import SampleObject
 
 
-# TODO: Log all of the stdout/stderr of mmseqs calls if --verbose mode is on
-
-
 @dataclass
 class MMseqsObject:
     database: Path
@@ -213,18 +210,17 @@ def get_core_genome(sample_object_list: [SampleObject], outdir: Path, n_cpu: int
     faa_list = [sample_object.mmseqs_object.representative_sequences_fasta for sample_object in sample_object_list]
     faa_list = sorted(faa_list)
 
-    # Concatenate all .faa files into master_genome, remove it if it already exists
-    master_faa_out = outdir / 'master_genome.faa'
-    if master_faa_out.exists():
-        master_faa_out.unlink()
-    master_faa = concatenate_faa(*faa_list, outname=master_faa_out)
-
-    master_faa = sort_faa(master_faa)
-
     core_genome_dir = outdir / 'core_genome'
     if core_genome_dir.exists():
         shutil.rmtree(core_genome_dir)
     core_genome_dir.mkdir(parents=True)
+
+    # Concatenate all .faa files into master_genome, remove it if it already exists
+    master_faa_out = core_genome_dir / 'master_genome.faa'
+    if master_faa_out.exists():
+        master_faa_out.unlink()
+    master_faa = concatenate_faa(*faa_list, outname=master_faa_out)
+    master_faa = sort_faa(master_faa)
 
     # MMSEQS CALLS
     # 1. Convert FASTA into mmseqs database format

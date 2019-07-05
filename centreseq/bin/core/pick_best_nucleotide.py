@@ -331,8 +331,11 @@ def pick_best_nucleotide(summary_report: Path, indir: Path, outdir: Path, n_cpu:
     :param n_cpu: Numbers of cpus. You need at least 10GB of memory per CPU for mmseqs
     :return: the path of the output file
     """
+    # Read in the original report then delete
     df_preliminary = pd.read_csv(summary_report, sep="\t")
-    out_report = outdir / 'summary_report_optimized.tsv'
+    summary_report.unlink()
+
+    out_report = outdir / 'summary_report.tsv'
 
     global pick
 

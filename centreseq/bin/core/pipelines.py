@@ -121,11 +121,15 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
     core_mmseqs_object.cluster_tsv = filter_core_cluster_tsv(cluster_tsv=core_mmseqs_object.cluster_tsv,
                                                              outdir=core_mmseqs_object.cluster_tsv.parent)
 
+    # Create report dir
+    report_dir = outdir / 'reports'
+    report_dir.mkdir(exist_ok=True)
+
     # SUMMARY REPORT
     main_log.info("Generating summary report")
     summary_report, summary_report_filtered = generate_summary_report(cluster_tsv=core_mmseqs_object.cluster_tsv,
                                                                       core_genome=core_mmseqs_object.fasta,
-                                                                      outdir=outdir)
+                                                                      outdir=report_dir)
     main_log.info(f"Summary report available at {summary_report}")
 
     # NOTE: The user can just do this singleton removal step (and more) very easily in Excel.
@@ -135,12 +139,13 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
     # Call pick_best_nucleotide to improve report
     if not no_optimize:
         main_log.info(f"Optimizing representative sequences by nucleotide")
-        summary_report, changed_names = pick_best_nucleotide(summary_report=summary_report, indir=outdir, outdir=outdir,
+        summary_report, changed_names = pick_best_nucleotide(summary_report=summary_report, indir=outdir,
+                                                             outdir=report_dir,
                                                              n_cpu=n_cpu_pickbest)
         main_log.info(f"Optimized report available at {summary_report}")
 
         # Log which clusters were altered by pick_best_nucleotide()
-        changed_names_log = outdir / 'pick_best_nucleotide_change_log.txt'
+        changed_names_log = outdir / 'logs' / 'pick_best_nucleotide_change_log.txt'
         with open(str(changed_names_log), 'w') as f:
             f.write(f"The following entries were changed by pick_best_nucleotide:\n")
             for n in changed_names:
@@ -154,7 +159,7 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
     main_log.debug(f"# genes shared in >=50% of samples:\t{core_gene_count_dict['n_soft_core_genes']}")
 
     core_gene_count_report = generate_core_gene_count_report(core_gene_count_dict=core_gene_count_dict,
-                                                             outdir=outdir, coverage_length=coverage_length,
+                                                             outdir=report_dir, coverage_length=coverage_length,
                                                              min_seq_id=min_seq_id)
     main_log.info(f"Core gene count report available {core_gene_count_report}")
 
@@ -162,7 +167,7 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
     roary_gene_count_dict = generate_roary_gene_count_dict(summary_report_tsv=summary_report,
                                                            n_samples=len(sample_object_list))
     roary_gene_count_report = generate_roary_gene_count_report(roary_gene_count_dict=roary_gene_count_dict,
-                                                               outdir=outdir,
+                                                               outdir=report_dir,
                                                                coverage_length=coverage_length,
                                                                min_seq_id=min_seq_id)
     main_log.info(f"Roary-style gene count report available {roary_gene_count_report}")
@@ -170,7 +175,8 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
     # PAIRWISE REPORT
     if pairwise:
         main_log.info("Comparing results from all possible sample pairs")
-        pairwise_gene_match_report = generate_pairwise_gene_match_report(summary_report=summary_report, outdir=outdir)
+        pairwise_gene_match_report = generate_pairwise_gene_match_report(summary_report=summary_report,
+                                                                         outdir=report_dir)
         main_log.info(f"Pairwise comparison report available at {pairwise_gene_match_report}")
 
         main_log.info(f"Generating network visualization file")
