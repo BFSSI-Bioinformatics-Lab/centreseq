@@ -26,6 +26,10 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
 
     # Prepare [SampleObject]
     sample_object_list = prepare_sample_objects_from_dir(fasta_dir=fasta_dir)
+    if len(sample_object_list) < 2:
+        main_log.error(f"ERROR: centreseq requires at least 2 samples to proceed. "
+                       f"Found {len(sample_object_list)} in {fasta_dir}. Quitting.")
+        quit()
 
     # Variable to feed to Pool for multiprocessing - this is how many samples will be processed at once
     if len(sample_object_list) < round(n_cpu / 2):
@@ -215,7 +219,7 @@ def mmseqs_self_cluster_pipeline(sample: SampleObject, outdir: Path, n_cpu: int,
     mmseqs_dir.mkdir(exist_ok=False, parents=True)
     main_log.debug(f"Running mmseqs2 linclust on {sample.sample_id}")
     mmseqs_object = self_cluster_pipeline(fasta=sample.prokka_object.faa, outdir=mmseqs_dir, n_cpu=n_cpu,
-                                          min_seq_id=min_seq_id, coverage_length=coverage_length, iterations=3)
+                                          min_seq_id=min_seq_id, coverage_length=coverage_length)
     sample.mmseqs_object = mmseqs_object
     return sample, iteration
 
