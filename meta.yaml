@@ -1,5 +1,5 @@
 {% set name = "centreseq" %}
-{% set version = "v0.3.0" %}
+{% set version = "0.3.0" %}
 {% set sha256 = "35e708df1fa5656a12a9960c3314615cd5ab748f16f07075f5af6539a6044265" %}
 
 package:
@@ -7,7 +7,7 @@ package:
   version: "{{ version }}"
 
 source:
-  url: https://github.com/bfssi-forest-dussault/centreseq/archive/{{ version }}.zip
+  url: https://github.com/bfssi-forest-dussault/centreseq/archive/v{{ version }}.zip
   sha256: '{{ sha256 }}'
 
 build:
@@ -32,10 +32,10 @@ requirements:
     - xlsxwriter >=1.1.8
     - cyvcf2
     - mmseqs2
-    - prokka
     - muscle
     - seqkit
     - snp-sites
+    - prokka
     - minced
 
 test:
