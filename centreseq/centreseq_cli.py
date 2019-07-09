@@ -62,7 +62,7 @@ def centreseq():
 
 
 @centreseq.command(short_help="Given an input directory containing assemblies, establishes a core genome",
-                   help="Given an input directory containing any number of assemblies (.FASTA), centreseq core will "
+                   help="Given an input directory containing any number of assemblies (.fasta), centreseq core will "
                         "1) annotate the genomes with Prokka, "
                         "2) perform self-clustering on each genome with MMSeqs2 linclust, "
                         "3) concatenate the self-clustered genomes into a single pan-genome, "
@@ -77,8 +77,8 @@ def centreseq():
               type=click.Path(),
               required=True,
               help='Root directory to store all output files. If this directory already exists, the pipeline will '
-                   'attempt to skip the Prokka step by reading in existing Prokka output, but will overwrite all other '
-                   'existing result files.',
+                   'attempt to skip the Prokka step by reading in the existing Prokka output directory, '
+                   'but will overwrite all other existing result files.',
               callback=convert_to_path)
 @click.option('-n', '--n-cpu',
               type=click.INT,
@@ -90,7 +90,7 @@ def centreseq():
               type=click.INT,
               required=False,
               default=2,
-              help="Number of CPUs for pick_best_nucleotide. You need at least 10GB of RAM per CPU.")
+              help="Number of CPUs for pick_best_nucleotide. You will need ~10GB of RAM per CPU.")
 @click.option('-m', '--min-seq-id',
               type=click.FLOAT,
               required=False,
@@ -106,12 +106,14 @@ def centreseq():
               is_flag=True,
               default=False,
               help='Set this flag to skip the pick-best-nucleotide step. '
-                   'Will improve runtime but decrease quality of results.')
+                   'Setting this will improve runtime but provide an arbitrary representative sequence rather than '
+                   'the best fit. This parameter has no effect on the number of core genes detected.')
 @click.option('--pairwise',
               is_flag=True,
               default=False,
               help='Generate pairwise comparisons of all genomes. '
-                   'This output file can be used to view a network chart of the core genome.')
+                   'This output file can be used to view an interactive network chart of the core genome '
+                   'in a web browser.')
 @click.option('-v', '--verbose',
               is_flag=True,
               default=False,
