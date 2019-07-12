@@ -31,12 +31,6 @@ Commands:
   tree  Produces output for phylogenetic tree software
 ```
 
-### Issues
-The conda distribution might have an issue installing the correct version of `minced`,
- a Prokka dependency, so you might need to run the following command within your conda environment after installing centreseq:
-
-`conda install minced`
-
 ### External Dependencies
 
 These programs will be automatically installed with the conda package.
