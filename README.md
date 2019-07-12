@@ -26,9 +26,11 @@ Options:
   --help      Show this message and exit.
 
 Commands:
-  core  Given an input directory containing assemblies, establishes a core
-        genome
-  tree  Produces output for phylogenetic tree software
+  core     Given an input directory containing assemblies, establishes a core
+           genome
+  extract  Helper tool to extract sequences from a particular core cluster
+  subset   Subset summary_report.tsv to only samples of interest
+  tree     Produces output for phylogenetic tree software
 ```
 
 ### External Dependencies
