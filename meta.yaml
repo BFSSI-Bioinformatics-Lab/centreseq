@@ -1,6 +1,6 @@
 {% set name = "centreseq" %}
-{% set version = "0.3.0" %}
-{% set sha256 = "35e708df1fa5656a12a9960c3314615cd5ab748f16f07075f5af6539a6044265" %}
+{% set version = "0.3.1" %}
+{% set sha256 = "" %}
 
 package:
   name: "{{ name }}"
@@ -30,6 +30,7 @@ requirements:
     - scipy >=1.1
     - tqdm >=4.32.2
     - xlsxwriter >=1.1.8
+    - seaborn >=0.9.0
     - cyvcf2
     - mmseqs2
     - muscle
