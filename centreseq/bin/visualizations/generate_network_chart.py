@@ -18,9 +18,9 @@ def generate_network_chart(pairwise_gene_count_report: Path, roary_report: Path,
         filedata = file.read()
 
     # Replace the target string
-    filedata = filedata.replace('ROARY_GENE_COUNT_REPORT_VARIABLE', roary_report.name)
+    filedata = filedata.replace('ROARY_GENE_COUNT_REPORT_VARIABLE', f"/reports/{roary_report.name}")
     filedata = filedata.replace('NETWORK_CODING', network_coding.name)
-    filedata = filedata.replace('PAIRWISE_GENE_COUNT_REPORT_TSV', pairwise_gene_count_report.name)
+    filedata = filedata.replace('PAIRWISE_GENE_COUNT_REPORT_TSV', f"reports/{pairwise_gene_count_report.name}")
     filedata = filedata.replace('D3_V5', str(D3_V5))
     filedata = filedata.replace('D3_SIMPLE_SLIDER', str(D3_SIMPLE_SLIDER))
 
