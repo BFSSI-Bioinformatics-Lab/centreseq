@@ -122,14 +122,12 @@ def get_product_list_from_prokka_tsv(tsv: Path):
         print(gene)
 
 
-# @measure
 def get_product_from_prokka_fasta_header(fasta_header: str) -> str:
     """ Grabs the gene portion of a .ffn or .faa fasta header """
     contig, delim, product = fasta_header.partition(" ")
     return product
 
 
-# @measure
 def get_product_count_dict_from_prokka(ffn_file: Path) -> dict:
     """ Reads Prokka fasta file and returns a dict of counts of each product name extracted from the headers """
     product_list = []
