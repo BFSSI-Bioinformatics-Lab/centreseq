@@ -58,7 +58,7 @@ def set_cpu_count(n_cpu: int = None) -> int:
     return n_cpu
 
 
-def generate_unordered_pairs(sample_list: list):
+def generate_unordered_pairs(sample_list: list) -> list:
     """ Creates a list of of all possible unordered pairs of items in a list """
     return list(itertools.combinations(sample_list, 2))
 
