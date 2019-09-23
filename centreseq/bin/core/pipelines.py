@@ -6,7 +6,6 @@ from pathlib import Path
 from tqdm import tqdm
 
 from centreseq.bin.core.accessories import extract_sample_id_from_fasta
-from centreseq.bin.core.generate_network_chart import generate_network_chart, generate_network_chart_coding_file
 from centreseq.bin.core.mmseqs_wrapper import get_core_genome, self_cluster_pipeline
 from centreseq.bin.core.pairwise_comparisons import generate_pairwise_gene_match_report
 from centreseq.bin.core.pick_best_nucleotide import pick_best_nucleotide
@@ -15,6 +14,8 @@ from centreseq.bin.core.sample_handling import SampleObject
 from centreseq.bin.core.summary import generate_summary_report, generate_core_gene_count_dict, \
     generate_core_gene_count_report, generate_roary_gene_count_dict, generate_roary_gene_count_report
 from centreseq.bin.core.validate_clusters import filter_core_cluster_tsv
+from centreseq.bin.visualizations.generate_network_chart import generate_network_chart, \
+    generate_network_chart_coding_file
 from centreseq.bin.visualizations.charts import generate_rarefaction_chart
 
 
@@ -122,7 +123,7 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
                                          coverage_length=coverage_length)
 
     # REPAIR CORE GENOME CLUSTER TSV
-    main_log.info("Repairing any errors in the core genome cluster tsv file")
+    main_log.debug("Repairing any errors in the core genome cluster tsv file")
     core_mmseqs_object.cluster_tsv = filter_core_cluster_tsv(cluster_tsv=core_mmseqs_object.cluster_tsv,
                                                              outdir=core_mmseqs_object.cluster_tsv.parent)
 
