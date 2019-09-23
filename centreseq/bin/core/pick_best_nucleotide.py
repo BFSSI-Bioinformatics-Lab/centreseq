@@ -131,9 +131,9 @@ def run_mmseqs(seqs1, seqs2):
 
     # This needs at least mmseqs v8
     result = subprocess.run(["mmseqs"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    #m = re.search("MMseqs2 Version: ([0-9])\..+", result.stdout.decode('utf-8'))
-    #assert m, "Can't read your mmseqs version, requires at least version 8"
-    #assert int(m.group(1)) >= 8, "Require mmseqs at least version 8"
+    # m = re.search("MMseqs2 Version: ([0-9])\..+", result.stdout.decode('utf-8'))
+    # assert m, "Can't read your mmseqs version, requires at least version 8"
+    # assert int(m.group(1)) >= 8, "Require mmseqs at least version 8"
 
     cmd = f"mmseqs easy-search {query_fasta} {target_fasta} {outfile} {tmpdir.name} --threads 1 --split-memory-limit {max_mem_use} --search-type 3"
     run_subprocess(cmd, get_stdout=True)
@@ -160,6 +160,7 @@ def load_pangenome_list(pangenome_list: list):
         if pd.isnull(item):
             continue
         sp = "_".join(item.split("_")[:-1])
+        assert sp != "", "Cannot read species name from sequence name"
         # If we have any paralogs, then we're going to need to update this
         if len(clusters_global[sp][item]) > 2:
             update = True
@@ -333,14 +334,17 @@ def pick_best_nucleotide(summary_report: Path, indir: Path, outdir: Path, n_cpu:
     """
     # Read in the original report then delete
     df_preliminary = pd.read_csv(summary_report, sep="\t")
-    summary_report.unlink()
+    cols_metadata = ["cluster", "cluster_representative", "n_members", "product"]
+    cols_data = [x for x in df_preliminary.columns if x not in cols_metadata]
+    # summary_report.unlink()
 
     out_report = outdir / 'summary_report.tsv'
 
     global pick
 
     def pick(i):
-        pg_list = df_preliminary.iloc[i, 4:].tolist()
+        # pg_list = df_preliminary.iloc[i, 4:].tolist()
+        pg_list = df_preliminary.loc[i, cols_data].tolist()
         medoid, cluster_post = find_medoid(indir, pg_list)
         return i, medoid, cluster_post
 
@@ -348,8 +352,8 @@ def pick_best_nucleotide(summary_report: Path, indir: Path, outdir: Path, n_cpu:
         # input comes from pick()
         i, medoid, post = r
         if (medoid is not None) & (post is not None):
-            df_preliminary.iloc[i, 4:] = post
-            df_preliminary.iloc[i, 1] = medoid
+            df_preliminary.loc[i, cols_data] = post
+            df_preliminary.loc[i, "cluster_representative"] = medoid
         pbar.update()
 
     # since we can't keep this in a class while multiprocessing, we need to save the clusters as a global
@@ -364,7 +368,8 @@ def pick_best_nucleotide(summary_report: Path, indir: Path, outdir: Path, n_cpu:
     # First determine those genes that need to be changed at all. This is quick and
     to_change = []
     for i in tqdm.tqdm(range(df_preliminary.shape[0]), desc="Finding clusters to improve"):
-        pg_list = df_preliminary.iloc[i, 4:].tolist()
+        # pg_list = df_preliminary.iloc[i, 4:].tolist()
+        pg_list = df_preliminary.loc[i, cols_data].tolist()
         update = load_pangenome_list(pg_list)
         if update:
             to_change.append(i)
@@ -385,18 +390,19 @@ def pick_best_nucleotide(summary_report: Path, indir: Path, outdir: Path, n_cpu:
     df_preliminary.to_csv(str(out_report), sep="\t", header=True, index=False)
     return out_report, to_change_names
 
-
 # if __name__ == "__main__":
-#     # pick_best_nucleotide(Path('/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/summary_report.csv'),
-#     Path("/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/"),Path("/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/"))
+#     summary_report = "CentreSeq-m90c90/reports/summary_report_singletons_removed.tsv"
+#     pick_best_nucleotide(Path('CentreSeq-m90c90/reports/summary_report_singletons_removed.tsv'), Path('CentreSeq-m90c90/'), Path('CentreSeq-m90c90/'))
+#     # Path("/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/"),Path("/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/"))
 #     # qwe
-#     indir_ = "/mnt/Freya/Analysis/GenomeSimilarity/1250-Vibrio_HardCORE/"
+#     #indir_ = "/mnt/Freya/Analysis/GenomeSimilarity/1250-Vibrio_HardCORE/"
 #     picker_ = PickBestNucleotide(indir=indir_)
 #
-#     summary_report_ = indir_ + 'summary_report.csv'
+#     #summary_report_ = indir_ + 'summary_report.csv'
+#     summary_report = "CentreSeq-m90c90/reports/summary_report_singletons_removed.tsv"
 #
 #     df_preliminary_ = pd.read_csv(summary_report_, sep="\t")
-#     for i_ in [190]:
+#     for i_ in range(df_preliminary_.shape[0]):
 #         print(i_)
 #         pg_list_ = df_preliminary_.iloc[i_, 4:].tolist()
 #         picker_.load_pangenome_list(pg_list_)
