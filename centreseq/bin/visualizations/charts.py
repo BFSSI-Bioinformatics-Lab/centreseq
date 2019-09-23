@@ -19,9 +19,9 @@ def generate_gene_count_dict(df: pd.DataFrame, repeats: int = 1):
     - Next, answer questions 1) and 2)
     - Repeat with n+1 til we reach a maximum (this is equal to the total # of samples we have)
 
-    :param df:
-    :param repeats:
-    :return:
+    Note that increasing the number of repeats increases runtime while tightening up the
+    variance observed in the curves.
+
     """
     upper_range = df['n_members'].max()
 
@@ -61,7 +61,7 @@ def generate_rarefaction_chart(summary_report: Path):
     outdir = summary_report.parent
     df_ = read_summary_report(summary_report)
     df_ = df_.replace(r'^\s*$', np.nan, regex=True)  # Replace empty strings with NaN values
-    gene_count_dict_ = generate_gene_count_dict(df_)
+    gene_count_dict_ = generate_gene_count_dict(df=df_, repeats=5)
     df_count = pd.DataFrame.from_dict(data=gene_count_dict_, orient='index')
     df_count.to_csv(outdir / 'rarefaction_curve.csv')
     sns.set(style="whitegrid", color_codes=True)
