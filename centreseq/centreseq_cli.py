@@ -67,7 +67,9 @@ def centreseq():
                         "2) perform self-clustering on each genome with MMSeqs2 linclust, "
                         "3) concatenate the self-clustered genomes into a single pan-genome, "
                         "4) cluster the pan-genome with MMSeqs2 linclust, establishing a core genome, "
-                        "5) generate helpful reports to interrogate your dataset")
+                        "5) generate helpful reports to interrogate your dataset\n"
+                        "Note that if specified output directory already exists, centreseq will search for an existing "
+                        "Prokka directory and skip this step if possible.")
 @click.option('-f', '--fasta-dir',
               type=click.Path(exists=True),
               required=True,
@@ -90,7 +92,7 @@ def centreseq():
               type=click.INT,
               required=False,
               default=2,
-              help="Number of CPUs for pick_best_nucleotide. You will need ~10GB of RAM per CPU.")
+              help="Number of CPUs for pick_best_nucleotide. You will need substantial RAM per CPU.")
 @click.option('-m', '--min-seq-id',
               type=click.FLOAT,
               required=False,
@@ -106,8 +108,8 @@ def centreseq():
               is_flag=True,
               default=False,
               help='Set this flag to skip the pick-best-nucleotide step. '
-                   'Setting this will improve runtime but provide an arbitrary representative sequence rather than '
-                   'the best fit. This parameter has no effect on the number of core genes detected.')
+                   'Setting this will improve runtime but will provide an arbitrary representative sequence rather '
+                   'than a representative medoid. This parameter has no effect on the number of core genes detected.')
 @click.option('--pairwise',
               is_flag=True,
               default=False,
@@ -166,7 +168,7 @@ def core(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq
 
 @centreseq.command(short_help="Produces output for phylogenetic tree software",
                    help="Processes centreseq core output files to produce files that can be fed into phylogenetic tree "
-                        "building software")
+                        "building software.")
 @click.option('-s', '--summary-report',
               type=click.Path(exists=True),
               required=True,
@@ -193,6 +195,10 @@ def core(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq
               default=None,
               help='Number of CPUs to dedicate to parallelizable steps of the pipeline.'
                    'Will take all available CPUs - 1 if not specified.')
+@click.option('-vcf', '--vcf-flag',
+              help='Use this flag to generate variant calls for each cluster.',
+              default=False,
+              is_flag=True)
 @click.option('-v', '--verbose',
               is_flag=True,
               default=False,
@@ -203,7 +209,8 @@ def core(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq
               is_eager=True,
               callback=print_version,
               expose_value=False)
-def tree(summary_report: Path, prokka_dir: Path, outdir: Path, percentile: float, n_cpu: int, verbose: bool):
+def tree(summary_report: Path, prokka_dir: Path, outdir: Path, percentile: float, n_cpu: int, vcf_flag: bool,
+         verbose: bool):
     # Outdir validation
     if outdir.exists():
         logging.error(f"ERROR: Directory {outdir} already exists!")
@@ -237,7 +244,8 @@ def tree(summary_report: Path, prokka_dir: Path, outdir: Path, percentile: float
                   prokka_dir=prokka_dir,
                   outdir=outdir,
                   n_cpu=n_cpu,
-                  percentile=percentile)
+                  percentile=percentile,
+                  vcf_flag=vcf_flag)
 
 
 @centreseq.command(short_help="Helper tool to extract sequences from a particular core cluster",
