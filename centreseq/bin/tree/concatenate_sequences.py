@@ -42,10 +42,21 @@ def write_concat_seqs_dict(concat_seqs_dict: dict, outdir: Path) -> Path:
     outfile = outdir / 'concatenated_sequences.fasta'
     if outfile.exists():
         outfile.unlink()
+
+    # outdir_samples = outdir / 'samples'
+    # outdir_samples.mkdir(exist_ok=True)
+
     outfile_ = open(str(outfile), 'a+')
     for sample_id, sequence in concat_seqs_dict.items():
+        # Write to master concatenated file
         outfile_.write(f">{sample_id}\n")
         outfile_.write(f"{sequence}\n")
+
+        # Write individual files
+        # outfile_sample = outdir_samples / f"{sample_id}.concatenated.fasta"
+        # with open(str(outfile_sample), 'w') as f:
+        #     f.write(f">{sample_id}\n")
+        #     f.write(f"{sequence.replace('-', '')}\n")
     outfile_.close()
     return outfile
 
@@ -69,7 +80,7 @@ def generate_concat_seqs_dict(sample_ids: set, indir: Path, n_processes=4) -> di
     return sequence_storage
 
 
-def populate_template_dict(template_dict: dict, cluster_file: Path, sample_ids: list):
+def populate_template_dict(template_dict: dict, cluster_file: Path, sample_ids: list) -> dict:
     with open(str(cluster_file), 'r') as f:
         cluster_dict = deepcopy(template_dict)
         seq_length = 0
