@@ -40,7 +40,7 @@ class Cluster:
             if o.sequence_length is not None:
                 return o.sequence_length
 
-    def generate_member_objects(self):
+    def generate_member_objects(self) -> list:
         """ Creates a ClusterMember instance for each entry in self.member_list """
         member_objects = []
         for member in self.member_list:
@@ -134,12 +134,9 @@ class ClusterVariants:
         return len(self.variant_list)
 
 
-def populate_cluster_object(row: pd.Series, prokka_dir: Path):
+def populate_cluster_object(row: pd.Series, prokka_dir: Path) -> Cluster:
     """
     Creates a Cluster object from a row extracted from the summary_report.tsv file produced by the core pipeline
-    :param row:
-    :param prokka_dir: Path to the
-    :return:
     """
     member_cols = [x for x in row.keys() if x not in ['cluster', 'cluster_representative', 'product', 'n_members']]
 
