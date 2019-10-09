@@ -43,8 +43,9 @@ def write_concat_seqs_dict(concat_seqs_dict: dict, outdir: Path) -> Path:
     if outfile.exists():
         outfile.unlink()
 
-    # outdir_samples = outdir / 'samples'
-    # outdir_samples.mkdir(exist_ok=True)
+    # TODO: Decide whether or not to disable this sample specific output
+    outdir_samples = outdir / 'samples'
+    outdir_samples.mkdir(exist_ok=True)
 
     outfile_ = open(str(outfile), 'a+')
     for sample_id, sequence in concat_seqs_dict.items():
@@ -53,10 +54,10 @@ def write_concat_seqs_dict(concat_seqs_dict: dict, outdir: Path) -> Path:
         outfile_.write(f"{sequence}\n")
 
         # Write individual files
-        # outfile_sample = outdir_samples / f"{sample_id}.concatenated.fasta"
-        # with open(str(outfile_sample), 'w') as f:
-        #     f.write(f">{sample_id}\n")
-        #     f.write(f"{sequence.replace('-', '')}\n")
+        outfile_sample = outdir_samples / f"{sample_id}.concatenated.fasta"
+        with open(str(outfile_sample), 'w') as f:
+            f.write(f">{sample_id}\n")
+            f.write(f"{sequence.replace('-', '')}\n")
     outfile_.close()
     return outfile
 
