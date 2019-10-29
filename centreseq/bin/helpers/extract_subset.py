@@ -1,8 +1,12 @@
 import sys
 import time
+import logging
+import pandas as pd
 from pathlib import Path
 
-import pandas as pd
+
+main_log = logging.getLogger('main_log')
+
 
 """
 Given an input text file of Sample IDs and a summary report, will return a filtered version of the summary report
@@ -17,10 +21,10 @@ def extract_subset(input_samples: Path, summary_report: Path, outpath: Path):
         if outpath.suffix == "":
             outpath = outpath.with_suffix(".tsv")
 
-    print(f"Started extract_subset.py with the following input values:")
-    print(f"\tinput_samples\t: {input_samples}")
-    print(f"\tsummary_report\t: {summary_report}")
-    print(f"\toutpath\t\t\t: {outpath}")
+    main_log.info(f"Started extract_subset.py with the following input values:")
+    main_log.info(f"\tinput_samples\t: {input_samples}")
+    main_log.info(f"\tsummary_report\t: {summary_report}")
+    main_log.info(f"\toutpath\t\t\t: {outpath}")
 
     # Read in the user input
     df = pd.read_csv(summary_report, sep="\t")
@@ -36,7 +40,7 @@ def extract_subset(input_samples: Path, summary_report: Path, outpath: Path):
     # Create a list of samples in the summary report not including the user's input samples
     other_samples = list(set(valid_columns) - set(samples))
 
-    print(f"Filtering {summary_report.name}...")
+    main_log.info(f"Filtering {summary_report.name}...")
 
     # Sort the dataframe so our desired rows are up top (this step isn't necessary, whatever)
     df = df.sort_values(by=other_samples, na_position='first')
@@ -47,7 +51,7 @@ def extract_subset(input_samples: Path, summary_report: Path, outpath: Path):
     # Export df_filtered to csv
     df_filtered.to_csv(outpath, sep="\t", index=None)
 
-    print(f"DONE! Output available at {outpath}")
+    main_log.info(f"DONE! Output available at {outpath}")
 
 
 def validate_input_samples(samples: list, summary_report_df: pd.DataFrame):
@@ -59,10 +63,10 @@ def validate_input_samples(samples: list, summary_report_df: pd.DataFrame):
         if s not in valid_samples:
             error_list.append(s)
     if len(error_list) > 0:
-        print(f"ERROR: The following input Sample IDs could not be found in the summary report:")
-        print("\n".join(error_list))
+        main_log.error(f"ERROR: The following input Sample IDs could not be found in the summary report:")
+        main_log.error("\n".join(error_list))
         sys.exit()
-    print("Successfully validated sample list")
+    main_log.info("Successfully validated sample list")
 
 
 def read_input_samples(input_samples: Path) -> list:
