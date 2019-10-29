@@ -1,6 +1,9 @@
+import logging
 import multiprocessing
 from pathlib import Path
 from copy import deepcopy
+
+main_log = logging.getLogger('main_log')
 
 
 def concatenate_sequence_directory(sample_ids: [str], sequence_directory: Path, n_processes: int, outdir: Path) -> Path:
@@ -57,7 +60,7 @@ def write_concat_seqs_dict(concat_seqs_dict: dict, outdir: Path) -> Path:
         outfile_sample = outdir_samples / f"{sample_id}.concatenated.fasta"
         with open(str(outfile_sample), 'w') as f:
             f.write(f">{sample_id}\n")
-            f.write(f"{sequence.replace('-', '')}\n")
+            f.write(f"{sequence.replace('-', '')}\n")  # Removes the alignment characters. Feels wrong but works fine.
     outfile_.close()
     return outfile
 
@@ -102,9 +105,10 @@ def populate_template_dict(template_dict: dict, cluster_file: Path, sample_ids: 
                 seq_length += len(line)
         try:
             assert len(set(seq_lengths)) == 1
-        except AssertionError:
-            print(f"ERROR: Varying sequence lengths detected in {f.name}")
-            print(seq_lengths)
+        except AssertionError as e:
+            main_log.error(e)
+            main_log.error(f"ERROR: Varying sequence lengths detected in {f.name}")
+            main_log.error(seq_lengths)
         cluster_samples = set(cluster_samples)
         for s in sample_ids:
             if s not in cluster_samples:
