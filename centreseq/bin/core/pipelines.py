@@ -167,7 +167,7 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
     core_gene_count_report = generate_core_gene_count_report(core_gene_count_dict=core_gene_count_dict,
                                                              outdir=report_dir, coverage_length=coverage_length,
                                                              min_seq_id=min_seq_id)
-    main_log.info(f"Core gene count report available {core_gene_count_report}")
+    main_log.info(f"Core gene count report available at {core_gene_count_report}")
 
     # ROARY-STYLE GENE COUNT REPORT
     roary_gene_count_dict = generate_roary_gene_count_dict(summary_report_tsv=summary_report,
@@ -176,7 +176,7 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
                                                                outdir=report_dir,
                                                                coverage_length=coverage_length,
                                                                min_seq_id=min_seq_id)
-    main_log.info(f"Roary-style gene count report available {roary_gene_count_report}")
+    main_log.info(f"Roary-style gene count report available at {roary_gene_count_report}")
 
     # PAIRWISE REPORT
     if pairwise:
