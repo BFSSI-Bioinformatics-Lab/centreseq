@@ -16,7 +16,7 @@ from centreseq.bin.core.summary import generate_summary_report, generate_core_ge
 from centreseq.bin.core.validate_clusters import filter_core_cluster_tsv
 from centreseq.bin.visualizations.generate_network_chart import generate_network_chart, \
     generate_network_chart_coding_file
-from centreseq.bin.visualizations.charts import generate_rarefaction_chart
+from centreseq.bin.visualizations.charts import generate_gene_count_chart
 
 
 def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq_id: float,
@@ -194,14 +194,15 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
                                                outdir=outdir)
         main_log.info(f"To view the network graph, open a bash terminal, cd to this directory ({outdir}),"
                       f" then run the following command:\n\t\tpython -m http.server\nThis will start a server."
-                      f" Now you may open {network_chart} in Chrome, Chromium or Firefox.")
+                      f"Navigate to the server in Chrome, Chromium or Firefox (e.g. http://0.0.0.0:8000), "
+                      f"and open network_graph.html.")
         main_log.info(f"Coding file for network graph available at {network_coding}."
                       f"\nYou can change the values in the group_id column to alter the "
                       f"colouration of the network chart.")
         main_log.info("Done!")
 
-    main_log.info(f"Building rarefaction curves")
-    generate_rarefaction_chart(summary_report=summary_report)
+    main_log.info(f"Building gene count curves")
+    generate_gene_count_chart(summary_report=summary_report)
 
 
 def prokka_pipeline(sample: SampleObject, outdir: Path, n_cpu: int, iteration: int):

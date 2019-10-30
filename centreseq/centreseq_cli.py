@@ -1,3 +1,12 @@
+"""
+TODO:
+    - Verify functionality of the network plot
+    - Add parameter for gene count curve iterations
+    - Clean up unused code + analyses that are not used - there is a fair amount of junk lying around
+    - General improvements to help documentation
+    - Get rid of the 'singletons_removed' report file
+"""
+
 import logging
 import os
 import shutil
@@ -12,25 +21,19 @@ from centreseq.bin.helpers.extract_subset import extract_subset
 from centreseq.bin.tree.tree_pipeline import tree_pipeline
 from centreseq.config import check_dependencies
 
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 __authors__ = ["Forest Dussault", "Adrian Verster", "Nicholas Petronella"]
 __email__ = "forest.dussault@canada.ca"
 
 
 def print_version(ctx, param, value):
+    """ TODO: Activate this once there's something to cite """
     if not value or ctx.resilient_parsing:
         return
     print(f"Version\t: {__version__}")
     print(f"Authors\t: {', '.join(__authors__)}")
     print(f"Email\t: {__email__}")
     print(f"Source\t: https://github.com/bfssi-forest-dussault/centreseq")
-    quit()
-
-
-def print_citation(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    print(f"TBA")
     quit()
 
 
@@ -107,15 +110,15 @@ def centreseq():
 @click.option('--no-optimize',
               is_flag=True,
               default=False,
-              help='Set this flag to skip the pick-best-nucleotide step. '
-                   'Setting this will improve runtime but will provide an arbitrary representative sequence rather '
-                   'than a representative medoid. This parameter has no effect on the number of core genes detected.')
+              help='Set this flag to skip the "pick best nucleotide" step. '
+                   'Setting this will improve runtime considerably but will provide an arbitrary representative '
+                   'sequence rather than a representative medoid. This parameter has no effect on the number of '
+                   'core genes detected.')
 @click.option('--pairwise',
               is_flag=True,
               default=False,
-              help='Generate pairwise comparisons of all genomes. '
-                   'This output file can be used to view an interactive network chart of the core genome '
-                   'in a web browser.')
+              help='Generate pairwise comparisons of all genomes. This output file can be used to view an '
+                   'interactive network chart of the core genome in a web browser.')
 @click.option('-v', '--verbose',
               is_flag=True,
               default=False,
@@ -249,7 +252,7 @@ def tree(summary_report: Path, prokka_dir: Path, outdir: Path, percentile: float
 
 
 @centreseq.command(short_help="Helper tool to extract sequences from a particular core cluster",
-                   help="Given the path to the centreseq pipeline root directory and the ID of a cluster "
+                   help="Given the path to the centreseq core directory and the ID of a cluster "
                         "representative, will create a multi-FASTA containing the sequences for all members of that "
                         "cluster. Generates both an .ffn and .faa file.")
 @click.option('-i', '--indir',

@@ -51,14 +51,14 @@ Interactive visualization generated from the pairwise report file.
   :width: 300
   :alt: Example network chart
 
-Rarefaction Curve
-^^^^^^^^^^^^^^^^^
+Gene Count Curve
+^^^^^^^^^^^^^^^^
 Visualization generated showing the # of 'core' genes vs. the # of 'pan' genes with increasing numbers of
 sampled genomes.
 
-.. image:: images/rarefaction_curve.png
+.. image:: images/gene_count_curve.png
   :width: 600
-  :alt: Example rarefaction curve
+  :alt: Example gene count curve
 
 Looping over a range from 1..n, the following process is executed,
 
