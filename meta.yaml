@@ -1,5 +1,5 @@
 {% set name = "centreseq" %}
-{% set version = "0.3.1" %}
+{% set version = "0.3.2" %}
 {% set sha256 = "" %}
 
 package:
@@ -32,11 +32,9 @@ requirements:
     - xlsxwriter >=1.1.8
     - seaborn >=0.9.0
     - pytest >=5.0.1
-    - cyvcf2
     - mmseqs2
     - muscle
     - seqkit
-    - snp-sites
     - prokka
     - minced
 

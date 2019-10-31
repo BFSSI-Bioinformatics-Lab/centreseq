@@ -198,10 +198,10 @@ def core(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq
               default=None,
               help='Number of CPUs to dedicate to parallelizable steps of the pipeline.'
                    'Will take all available CPUs - 1 if not specified.')
-@click.option('-vcf', '--vcf-flag',
-              help='Use this flag to generate variant calls for each cluster.',
-              default=False,
-              is_flag=True)
+# @click.option('-vcf', '--vcf-flag',
+#               help='Use this flag to generate variant calls for each cluster.',
+#               default=False,
+#               is_flag=True)
 @click.option('-v', '--verbose',
               is_flag=True,
               default=False,
@@ -212,8 +212,7 @@ def core(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq
               is_eager=True,
               callback=print_version,
               expose_value=False)
-def tree(summary_report: Path, prokka_dir: Path, outdir: Path, percentile: float, n_cpu: int, vcf_flag: bool,
-         verbose: bool):
+def tree(summary_report: Path, prokka_dir: Path, outdir: Path, percentile: float, n_cpu: int, verbose: bool):
     # Outdir validation
     if outdir.exists():
         logging.error(f"ERROR: Directory {outdir} already exists!")
@@ -243,6 +242,7 @@ def tree(summary_report: Path, prokka_dir: Path, outdir: Path, percentile: float
     main_log.debug(f"verbose: {verbose}")
 
     # Call the pipeline
+    vcf_flag = False  # This functionality is disabled for the forseeable future
     tree_pipeline(summary_report=summary_report,
                   prokka_dir=prokka_dir,
                   outdir=outdir,

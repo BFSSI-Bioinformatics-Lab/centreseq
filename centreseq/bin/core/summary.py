@@ -144,13 +144,6 @@ def generate_roary_gene_count_dict(summary_report_tsv: Path, n_samples: int) -> 
         df[(df.n_members >= threshold_dict['total_genes'][0]) &
            (df.n_members <= threshold_dict['total_genes'][1])])
 
-    roary_gene_df_dict = {
-        'core_genes': core_genes,
-        'soft_core_genes': soft_core_genes,
-        'shell_genes': shell_genes,
-        'cloud_genes': cloud_genes,
-    }
-
     roary_gene_count_dict = {
         'core_genes': n_core_genes,
         'soft_core_genes': n_soft_core_genes,
