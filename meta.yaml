@@ -1,13 +1,13 @@
 {% set name = "centreseq" %}
 {% set version = "0.3.2" %}
-{% set sha256 = "" %}
+{% set sha256 = "ed51fe3c6a418fba8d13c075fd7595a7f5640cb4c71235da20d8fd1d14e8167c" %}
 
 package:
   name: "{{ name }}"
   version: "{{ version }}"
 
 source:
-  url: https://github.com/bfssi-forest-dussault/centreseq/archive/v{{ version }}.zip
+  url: https://github.com/bfssi-forest-dussault/centreseq/archive/{{ version }}.zip
   sha256: '{{ sha256 }}'
 
 build:
