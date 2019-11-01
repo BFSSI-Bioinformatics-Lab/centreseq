@@ -31,6 +31,7 @@
 
 <body>
 <!-- Start a server with `python -m http.server` -->
+<!--TODO: Increase height of div for network to take up rest of screen; change slider to snap to whole integers-->
 <br>
 <div class="container-fluid">
     <div class="row">
@@ -52,6 +53,18 @@
                 <div class="col-sm">
                     <div id="slider-fill"></div>
                 </div>
+                <div class="col-sm">
+                    test
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4 border">
+            <h2>Information</h2>
+            <div class="alert alert-info">
+                This visualization displays pairwise relationships between samples depending on their percentage of
+                matching core clusters. This percentage threshold can be controlled via the slider to the left.
+                Upon changing the slider, hit the <kbd>Update</kbd> button to re-render the chart.
             </div>
         </div>
 
@@ -121,8 +134,9 @@
         .min(d3.min(slider_ticks))
         .max(d3.max(slider_ticks))
         .width(300)
-        .tickFormat(d3.format('.2%'))
+        .tickFormat(d3.format('.1%'))
         .ticks(5)
+        .step(0.01)
         .default(0.85)
         .fill('#2196f3')
         .on('onchange', val => {
@@ -465,6 +479,6 @@
         });
 
         // Combine links and nodes into one object
-        return { nodes, links };
+        return {nodes, links};
     }
 </script>
