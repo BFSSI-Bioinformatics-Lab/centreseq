@@ -1,12 +1,3 @@
-"""
-TODO:
-    - Verify functionality of the network plot
-    - Add parameter for gene count curve iterations
-    - Clean up unused code + analyses that are not used - there is a fair amount of junk lying around
-    - General improvements to help documentation
-    - Get rid of the 'singletons_removed' report file
-"""
-
 import logging
 import os
 import shutil
@@ -113,12 +104,12 @@ def centreseq():
               help='Set this flag to skip the "pick best nucleotide" step. '
                    'Setting this will improve runtime considerably but will provide an arbitrary representative '
                    'sequence rather than a representative medoid. This parameter has no effect on the number of '
-                   'core genes detected.')
+                   'core clusters detected.')
 @click.option('--pairwise',
               is_flag=True,
               default=False,
-              help='Generate pairwise comparisons of all genomes. This output file can be used to view an '
-                   'interactive network chart of the core genome in a web browser.')
+              help='Generate pairwise comparisons of all core genomes. This setting allows for viewing an  '
+                   'interactive network chart which visualizes core genome relatedness.')
 @click.option('-v', '--verbose',
               is_flag=True,
               default=False,
@@ -282,7 +273,7 @@ def extract(indir, outdir, cluster_representative):
 
 @centreseq.command(short_help="Subset summary_report.tsv to only samples of interest",
                    help="Given an input text file of Sample IDs and a summary report, will return a filtered version "
-                        "of the summary report for genes that belong exclusively in the input sample ID list")
+                        "of the summary report for clusters that belong exclusively in the input sample ID list")
 @click.option('-i', '--input-samples',
               type=click.Path(exists=True),
               required=True,
