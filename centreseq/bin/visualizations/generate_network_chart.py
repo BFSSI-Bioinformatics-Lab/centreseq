@@ -1,16 +1,10 @@
 from pathlib import Path
 
 NETWORK_GRAPH_HTML_TEMPLATE = Path(__file__).parents[1] / 'visualizations' / 'network_graph_template.html'
-# D3_V5 = Path(__file__).parents[1] / 'visualizations' / 'static' / 'd3.v5.min.js'
 D3_V5 = 'https://d3js.org/d3.v5.min.js'
-# D3_SIMPLE_SLIDER = Path(__file__).parents[1] / 'visualizations' / 'static' / 'd3-simple-slider.js'
 D3_SIMPLE_SLIDER = 'https://unpkg.com/d3-simple-slider'
-# print(NETWORK_GRAPH_HTML_TEMPLATE)
 assert NETWORK_GRAPH_HTML_TEMPLATE.exists()
 
-
-# D3_V5 = '/graph_assets/d3.v5.min.js'
-# D3_SIMPLE_SLIDER = './graph_assets/d3-simple-slider.js'
 
 def generate_network_chart(pairwise_gene_count_report: Path, roary_report: Path, network_coding: Path, outdir: Path):
     # Read in the file
