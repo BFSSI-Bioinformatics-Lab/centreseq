@@ -1,5 +1,9 @@
 |install with bioconda|
 
+.. image:: https://readthedocs.org/projects/centreseq/badge/?version=latest
+:target: https://centreseq.readthedocs.io/en/latest/?badge=latest
+:alt: Documentation Status
+
 .. toctree::
    :maxdepth: 4
 
