@@ -61,10 +61,14 @@ def generate_gene_count_chart(summary_report: Path):
     outdir = summary_report.parent
     df_ = read_summary_report(summary_report)
     df_ = df_.replace(r'^\s*$', np.nan, regex=True)  # Replace empty strings with NaN values
-    gene_count_dict_ = generate_gene_count_dict(df=df_, repeats=5)
-    df_count = pd.DataFrame.from_dict(data=gene_count_dict_, orient='index')
+    gene_count_dict = generate_gene_count_dict(df=df_, repeats=5)
+    gene_count_dict_to_chart(gene_count_dict=gene_count_dict, outdir=outdir)
+
+
+def gene_count_dict_to_chart(gene_count_dict: dict, outdir: Path):
+    df_count = pd.DataFrame.from_dict(data=gene_count_dict, orient='index')
     df_count.to_csv(outdir / 'gene_count_curve.csv')
     sns.set(style="whitegrid", color_codes=True)
     ax = sns.scatterplot(data=df_count, linewidth=0, alpha=0.7)
     ax.set(xlabel="Number of genomes", ylabel="Number of genes")
-    ax.figure.savefig(outdir / 'gene_count_curve.png')
+    ax.figure.savefig(outdir / 'gene_count_curve.png', bbox_inches='tight')
