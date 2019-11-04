@@ -1,9 +1,9 @@
 from pathlib import Path
 
 NETWORK_GRAPH_HTML_TEMPLATE = Path(__file__).parents[1] / 'visualizations' / 'network_graph_template.html'
-D3_V5 = 'https://d3js.org/d3.v5.min.js'
-D3_SIMPLE_SLIDER = 'https://unpkg.com/d3-simple-slider'
+STATIC_DIR = Path(__file__).parents[1] / 'visualizations' / 'static'
 assert NETWORK_GRAPH_HTML_TEMPLATE.exists()
+assert STATIC_DIR.exists()
 
 
 def generate_network_chart(pairwise_gene_count_report: Path, roary_report: Path, network_coding: Path, outdir: Path):
@@ -15,8 +15,7 @@ def generate_network_chart(pairwise_gene_count_report: Path, roary_report: Path,
     filedata = filedata.replace('ROARY_GENE_COUNT_REPORT_VARIABLE', f"/reports/{roary_report.name}")
     filedata = filedata.replace('NETWORK_CODING', network_coding.name)
     filedata = filedata.replace('PAIRWISE_GENE_COUNT_REPORT_TSV', f"reports/{pairwise_gene_count_report.name}")
-    filedata = filedata.replace('D3_V5', str(D3_V5))
-    filedata = filedata.replace('D3_SIMPLE_SLIDER', str(D3_SIMPLE_SLIDER))
+    filedata = filedata.replace('STATIC_DIR', str(STATIC_DIR))
 
     # Write the file out again
     outfile = outdir / 'network_graph.html'
@@ -24,6 +23,16 @@ def generate_network_chart(pairwise_gene_count_report: Path, roary_report: Path,
         outfile.unlink()
     with open(str(outfile), 'w') as file:
         file.write(filedata)
+
+    # Symlink the static files to static directory in outdir
+    staticdir = outdir / 'static'
+    staticdir.mkdir(exist_ok=True)
+    staticfiles = list(STATIC_DIR.glob("*"))
+    for s in staticfiles:
+        s_ = staticdir / s.name
+        if s_.exists():
+            continue
+        s_.symlink_to(s)
 
     return outfile
 
