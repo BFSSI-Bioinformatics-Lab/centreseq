@@ -12,7 +12,8 @@ log = logging.getLogger('main_log')
 def filter_core_cluster_tsv(cluster_tsv: Path, outdir: Path):
     """
     Filters/repairs the core cluster .tsv output file to ensure there are no cases where a single sample is represented
-    in a cluster more than once.
+    in a cluster more than once. Previous versions of MMSeqs2 would sometimes encounter minor issues with clustering,
+    and this method attempts to fix this. TODO: Verify this is still necessary
 
     :param cluster_tsv: path to cluster .tsv file
     :param outdir: path desired output directory
@@ -22,7 +23,7 @@ def filter_core_cluster_tsv(cluster_tsv: Path, outdir: Path):
     # Read TSV
     df = cluster_tsv_to_df(cluster_tsv=cluster_tsv)
 
-    # TODO: Factor some of the logic below into clean functions
+    # TODO: Refactor some of the logic below into clean functions
     # Get the cluster member dict
     cluster_member_dict = get_cluster_member_dict(df)
 
