@@ -1,13 +1,13 @@
 {% set name = "centreseq" %}
 {% set version = "0.3.2" %}
-{% set sha256 = "ed51fe3c6a418fba8d13c075fd7595a7f5640cb4c71235da20d8fd1d14e8167c" %}
+{% set sha256 = "" %}
 
 package:
   name: "{{ name }}"
   version: "{{ version }}"
 
 source:
-  url: https://github.com/bfssi-forest-dussault/centreseq/archive/{{ version }}.zip
+  url: https://github.com/BFSSI-Bioinformatics-Lab/centreseq/archive/{{ version }}.zip
   sha256: '{{ sha256 }}'
 
 build:
@@ -20,11 +20,10 @@ build:
 requirements:
   host:
     - pip
-    - python >=3.6
+    - python >=3.7
   run:
     - biopython >=1.70
     - click >=7.0
-    - dataclasses >=0.6
     - pandas >=0.24.0
     - python >=3.6
     - scipy >=1.1
