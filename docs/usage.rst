@@ -93,10 +93,8 @@ the ``tree`` module.
       -pct, --percentile FLOAT   Filter summary report by n_members to the top nth
                                  percentile. Defaults to 99.0.
       -n, --n-cpu INTEGER        Number of CPUs to dedicate to parallelizable
-                                 steps of the pipeline.Will take all available
+                                 steps of the pipeline. Will take all available
                                  CPUs - 1 if not specified.
-      -vcf, --vcf-flag           Use this flag to generate variant calls for each
-                                 cluster.
       -v, --verbose              Set this flag to enable more verbose logging.
       --version                  Use this flag to print the version and exit.
       --help                     Show this message and exit.
