@@ -138,8 +138,6 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
                                                                       outdir=report_dir)
     main_log.info(f"Summary report available at {summary_report}")
 
-    # NOTE: The user can just do this singleton removal step (and more) very easily in Excel.
-    # Not sure if it's worth basically duplicating the summary report.
     main_log.debug(f"Summary report with singletons removed available at {summary_report_filtered}")
 
     # Call pick_best_nucleotide to improve report
@@ -193,8 +191,8 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
                                                roary_report=roary_gene_count_report,
                                                outdir=outdir)
         main_log.info(f"To view the network graph, open a bash terminal, cd to this directory ({outdir}),"
-                      f" then run the following command:\n\t\tpython -m http.server\nThis will start a server."
-                      f"Navigate to the server in Chrome, Chromium or Firefox (e.g. http://0.0.0.0:8000), "
+                      f" then run the following command:\n\t\tpython -m http.server 8080\nThis will start a server."
+                      f"Navigate to the server in Chrome, Chromium or Firefox (e.g. http://0.0.0.0:8080), "
                       f"and open network_graph.html.")
         main_log.info(f"Coding file for network graph available at {network_coding}."
                       f"\nYou can change the values in the group_id column to alter the "
