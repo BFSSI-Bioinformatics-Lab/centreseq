@@ -1,8 +1,8 @@
 Examples
 ~~~~~~~~
 
-The following examples uses a small example dataset sourced from this [BioProject](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA327743).
-You can follow along by retrieving the `.fna` files, available in the following [archive](https://ndownloader.figshare.com/files/18519863).
+The following examples uses a small example dataset sourced from this (BioProject)[https://www.ncbi.nlm.nih.gov/bioproject/PRJNA327743].
+You can follow along by retrieving the `.fna` files, available in the following (archive)[https://ndownloader.figshare.com/files/18519863].
 
 Getting started
 ^^^^^^^^^^^^^^^
