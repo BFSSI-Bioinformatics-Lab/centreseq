@@ -26,7 +26,7 @@ def generate_gene_count_dict(df: pd.DataFrame, repeats: int = 5):
     upper_range = df['n_members'].max()
 
     gene_count_dict = {x: {"core": [], "pan": []} for x in range(2, upper_range + 1)}
-    for i in tqdm(range(2, upper_range + 1), desc="Calculating rarefaction"):
+    for i in tqdm(range(2, upper_range + 1), desc="Calculating gene counts"):
         # Repeat the process according to the number of repeats; end up with a mean value
         # TODO: maybe make box plots out of this data?
         for r in range(0, repeats):
