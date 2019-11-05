@@ -1,13 +1,13 @@
 {% set name = "centreseq" %}
-{% set version = "0.3.2" %}
-{% set sha256 = "" %}
+  {% set version = "0.3.3" %}
+  {% set sha256 = "84aeec69c385b10ac51e6f69e9d61f4772c41f94f5a9bd30793457691b85d8eb" %}
 
 package:
   name: "{{ name }}"
   version: "{{ version }}"
 
 source:
-  url: https://github.com/BFSSI-Bioinformatics-Lab/centreseq/archive/{{ version }}.zip
+  url: https://github.com/BFSSI-Bioinformatics-Lab/centreseq/archive/v{{ version }}.zip
   sha256: '{{ sha256 }}'
 
 build:
@@ -22,7 +22,7 @@ requirements:
     - pip
     - python >=3.7
   run:
-    - biopython >=1.70
+    - biopython >=1.74
     - click >=7.0
     - pandas >=0.24.0
     - python >=3.6
@@ -33,9 +33,7 @@ requirements:
     - pytest >=5.0.1
     - mmseqs2
     - muscle
-    - seqkit
     - prokka
-    - minced
 
 test:
   imports:
@@ -53,8 +51,8 @@ about:
   license: MIT
   license_family: MIT
   license_file: LICENSE
-  summary: Fast generation of a core genome among bacterial strains
-  dev_url: https://github.com/bfssi-forest-dussault/centreseq
+  summary: Fast generation of core genome from bacterial strains
+  dev_url: https://github.com/BFSSI-Bioinformatics-Lab/centreseq
 
 extra:
   recipe-maintainers:
