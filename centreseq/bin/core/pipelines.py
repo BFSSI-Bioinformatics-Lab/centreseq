@@ -230,11 +230,13 @@ def mmseqs_self_cluster_pipeline(sample: SampleObject, outdir: Path, n_cpu: int,
 
 def prepare_sample_objects_from_dir(fasta_dir: Path):
     """
-    Given an input directory containing *.fasta files, creates a SampleObject for each and returns as list
+    Given an input directory containing *.fasta/*.ffn/*.fna files, creates a SampleObject for each and returns as list
     :param fasta_dir: Directory containing all *.fasta files for core analysis
     :return: Sample dictionary containing sample_id:file_path relationships
     """
     file_list = list(fasta_dir.glob("*.fasta"))
+    file_list += list(fasta_dir.glob("*.fna"))
+    file_list += list(fasta_dir.glob("*.ffn"))
     sample_object_list = []
     for f in file_list:
         sample_object = SampleObject(sample_id=extract_sample_id_from_fasta(f), fasta_path=f)
