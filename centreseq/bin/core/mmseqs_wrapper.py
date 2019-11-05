@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 from dataclasses import dataclass
-from centreseq.bin.core.accessories import run_subprocess, concatenate_faa, sort_faa, log_mmseqs_output
+from centreseq.bin.core.accessories import run_subprocess, concatenate_faa, sort_fasta, log_mmseqs_output
 from centreseq.bin.core.sample_handling import SampleObject
 
 
@@ -183,7 +183,7 @@ def self_cluster_pipeline(fasta: Path, outdir: Path, n_cpu: int, min_seq_id: flo
 
     filtered_cluster_fasta = clean_cluster_fasta(cluster_seqs_fasta)
 
-    representative_sequences_fasta = sort_faa(representative_sequences_fasta)
+    representative_sequences_fasta = sort_fasta(representative_sequences_fasta, remove_original=True)
 
     mmseqs_object = MMseqsObject(
         database=database,
@@ -218,7 +218,7 @@ def get_core_genome(sample_object_list: [SampleObject], outdir: Path, n_cpu: int
     if master_faa_out.exists():
         master_faa_out.unlink()
     master_faa = concatenate_faa(*faa_list, outname=master_faa_out)
-    master_faa = sort_faa(master_faa)
+    master_faa = sort_fasta(master_faa, remove_original=True)
 
     # MMSEQS CALLS
     # 1. Convert FASTA into mmseqs database format
