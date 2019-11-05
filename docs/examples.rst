@@ -1,32 +1,35 @@
 Examples
 ~~~~~~~~
 
+The following examples uses a small example dataset sourced from this [BioProject](https://www.ncbi.nlm.nih.gov/bioproject/PRJNA327743).
+You can follow along by retrieving the `.fna` files, available in the following [archive](https://ndownloader.figshare.com/files/18519863).
 
 Getting started
 ^^^^^^^^^^^^^^^
 
-Given a directory with the following 10 complete genome assemblies:
+Given a directory called `assemblies` that we unzipped our sample archive into:
 
 ::
 
    /home/user/assemblies/
-    ├── Amager.1684.BMH.fasta
-    ├── Braenderup.276.BMH.fasta
-    ├── Citro.freundii.ID133751.fasta
-    ├── Citro.sp.ID135111.fasta
-    ├── Citro.werkmanii.ID060152.fasta
-    ├── Daytona.100.BMH.fasta
-    ├── Duesseldorf.2372.BMH.fasta
-    ├── Enteritidis.GC138550.fasta
-    ├── Enteritidis.GC148474.fasta
-    └── Fresno.2879.BMH.fasta
+    ├── GCA_001691885.1.fna
+    ├── GCA_001691915.1.fna
+    ├── GCA_001691965.1.fna
+    ├── GCA_001691975.1.fna
+    ├── GCA_001691985.1.fna
+    ├── GCA_001692005.1.fna
+    ├── GCA_001692045.1.fna
+    ├── GCA_001692065.1.fna
+    ├── GCA_001692085.1.fna
+    ├── GCA_001692105.1.fna
+    └── GCA_001692145.1.fna
 
 We can run the following command to run centreseq against our 10 input genomes with 16 cores, with all output being
-routed to `/home/user/centreseq_output`:
+routed to `/home/user/centreseq`:
 
 ::
 
-    centreseq core -f /home/user/assemblies/ -o /home/user/centreseq_output -n 16 --pairwise
+    centreseq core -f /home/user/assemblies/ -o /home/user/centreseq -n 16 --pairwise
 
 Once the program has finished, the following structure can be found in your output directory:
 
@@ -39,10 +42,11 @@ Once the program has finished, the following structure can be found in your outp
     ├── network_graph_coding.tsv
     ├── network_graph.html
     ├── prokka
+    ├── static
     └── reports
 
 An overview of the results can be found in the reports directory. Raw data from the core pipeline can be found in the
-*/core_genome*, */mmseqs2*, and */prokka* directories.
+*/core_genome*, */mmseqs2*, and */prokka* directories. Please refer to the `Reports` section of the documentation for further details.
 
 
 Launching the network chart
