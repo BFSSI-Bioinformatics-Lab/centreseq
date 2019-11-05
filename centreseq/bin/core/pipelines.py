@@ -60,7 +60,7 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
         main_log.info(f'Completed gathering existing Prokka results {prokka_errors_message}')
     else:
         # Async call to prokka_pipeline on every sample
-        main_log.info(f"Running Prokka on all provided samples ({n_processes} concurrent processes)")
+        main_log.info(f"Running Prokka on all provided samples (using {n_processes} concurrent processes)")
         pbar = tqdm(total=len(sample_object_list), desc="Running Prokka")
         pool = Pool(processes=n_processes)
 
@@ -80,13 +80,19 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
         pool.join()
         pbar.close()
 
-        sample_object_list = results
-        main_log.info(f"Prokka complete. Successfully annotated {len(sample_object_list)} samples.")
+        sample_object_list = sorted(results)
 
-    # Filter out samples where Prokka failed for some reason
-    sample_object_list = [sample_object for sample_object in sample_object_list if
-                          sample_object.prokka_object.faa is not None]
-    sample_object_list = sorted(sample_object_list)
+    # Loudly quit if Prokka failed for some reason
+    for s in sample_object_list:
+        if s.prokka_object.faa is None:
+            main_log.error(f"Prokka did not generate the expected files.\n"
+                           f"Note that the most likely culprit is that your input filenames for Prokka\n"
+                           f"(e.g. {s.fasta_path}) are too long.\n"
+                           f"Consider shortening the file names of your input genomes if possible.\n"
+                           f"Additionally, contig names must be <= 37 characters.")
+            quit()
+
+    main_log.info(f"Prokka complete. Successfully annotated {len(sample_object_list)} samples.")
 
     # Parallel call to mmseqs_pipeline on each sample. Clusters highly similar genes within a sample
     # and produces a representative seq FASTA

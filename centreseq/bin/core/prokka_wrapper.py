@@ -1,6 +1,7 @@
 import logging
 import pandas as pd
 from pathlib import Path
+from typing import Optional
 from dataclasses import dataclass
 from collections.__init__ import Counter
 
@@ -18,12 +19,12 @@ class ProkkaObject:
     """ Dataclass to store metadata on Prokka run """
 
     # Must be instantiated with these values
-    faa: Path
-    ffn: Path
-    tsv: Path
+    faa: Optional[Path]
+    ffn: Optional[Path]
+    tsv: Optional[Path]
 
     # Calculated fields that are determined through __post_init__
-    unique_product_list: list = None
+    unique_product_list: set = None
     total_product_list: list = None
     product_occurence_dictionary: dict = None
     filtered_product_occurence_dictionary: dict = None
@@ -62,21 +63,13 @@ class ProkkaObject:
         self.filtered_product_occurence_dictionary = filtered_product_occurence_dictionary
 
 
-def call_prokka(fasta_path: Path, sample_id: str, outdir: Path, n_cpu: int) -> ProkkaObject:
+def call_prokka(fasta_path: Path, sample_id: str, outdir: Path, n_cpu: int) -> Optional[ProkkaObject]:
     """ Makes a system call to Prokka, once complete populates a ProkkaObject with relevant data """
     cmd = f"prokka --centre CORE --compliant --kingdom Bacteria " \
-        f"--cpus {n_cpu} --prefix {sample_id} --locustag {sample_id} --outdir {outdir} {fasta_path}"
+          f"--cpus {n_cpu} --prefix {sample_id} --locustag {sample_id} --outdir {outdir} {fasta_path}"
     run_subprocess(cmd, get_stdout=True)
     # cleanup_prokka(prokka_dir=outdir)  # TODO: Turn this on - will remove extraneous Prokka results
-    try:
-        faa = list(outdir.glob("*.faa"))[0]
-        ffn = list(outdir.glob("*.ffn"))[0]
-        tsv = list(outdir.glob("*.tsv"))[0]
-        prokka_object = ProkkaObject(faa=faa, ffn=ffn, tsv=tsv)
-    except IndexError:
-        main_log.error("FAILED: Prokka did not generate the expected files.")
-        prokka_object = ProkkaObject(faa=None, ffn=None, tsv=None)
-        return prokka_object
+    prokka_object = prokka_obj_from_results_dir(prokka_dir=outdir)
     return prokka_object
 
 
@@ -86,12 +79,9 @@ def prokka_obj_from_results_dir(prokka_dir: Path) -> ProkkaObject:
         ffn = list(prokka_dir.glob("*.ffn"))[0]
         tsv = list(prokka_dir.glob("*.tsv"))[0]
         prokka_object = ProkkaObject(faa=faa, ffn=ffn, tsv=tsv)
-    except IndexError:
-        main_log.error(f"FAILED: Could not retrieve expected Prokka files from directory {prokka_dir}. "
-                       f"This may be a result of input filenames that are too long for Prokka to manage. "
-                       f"Additionally, contig names must be <= 37 characters.")
+    except IndexError as e:
+        main_log.debug(e)
         prokka_object = ProkkaObject(faa=None, ffn=None, tsv=None)
-        quit()  # TODO: Test if this is the desired behaviour. Probably best to just fail out of the program here...
         return prokka_object
     return prokka_object
 
