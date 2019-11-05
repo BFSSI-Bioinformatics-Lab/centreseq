@@ -1,10 +1,15 @@
 import itertools
 import logging
+import warnings
 import multiprocessing
 from functools import wraps
 from pathlib import Path
 from subprocess import PIPE, Popen
 from time import time
+
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore', PendingDeprecationWarning)
+    from Bio import SeqIO
 
 main_log = logging.getLogger('main_log')
 mmseqs_log = logging.getLogger('mmseqs_log')
@@ -38,13 +43,9 @@ def extract_sample_id_from_fasta(fasta: Path):
 
 
 def get_fasta_headers(fasta: Path) -> list:
-    """ Pulls headers any fasta file (e.g. lines starting with >) and returns them as a single list """
-    fasta_headers = []
-    with open(str(fasta)) as f:
-        for line in f.readlines():
-            if line.startswith(">"):
-                line = line.strip()
-                fasta_headers.append(line)
+    handle = open(str(fasta), "r")
+    parsed = SeqIO.parse(handle, "fasta")
+    fasta_headers = [f">{x.description}" for x in parsed]
     return fasta_headers
 
 
@@ -61,33 +62,6 @@ def set_cpu_count(n_cpu: int = None) -> int:
 def generate_unordered_pairs(sample_list: list) -> list:
     """ Creates a list of of all possible unordered pairs of items in a list """
     return list(itertools.combinations(sample_list, 2))
-
-
-def extract_contigs(fasta: Path, gene_list: list, outfile: Path) -> Path:
-    """
-    Searches through a FASTA file and extracts only contigs that are in the provided gene list
-    :param fasta: Path to FASTA file
-    :param gene_list: List of gene names to extract from contig file
-    :param outfile: Path to output file
-    :return: Path to output FASTA
-    """
-    outfile_ = open(str(outfile), "a+")
-
-    write_flag = False
-    with open(str(fasta), 'r') as infile:
-        for line in infile:
-            if line.startswith(">"):
-                for gene in gene_list:
-                    if gene in line:
-                        outfile_.write(line)
-                        write_flag = True
-                        break
-                    else:
-                        write_flag = False
-            elif write_flag:
-                outfile_.write(line)
-        outfile_.close()
-    return outfile
 
 
 def run_subprocess(cmd: str, get_stdout=False) -> str:
@@ -123,7 +97,6 @@ def log_mmseqs_output(out: str):
             mmseqs_log.debug(out_line)
 
 
-@measure
 def filter_gene_count_dict(gene_count_dict: dict) -> dict:
     """
     Filters gene_count_dict to only returns set of key/values with more than 1 hit
@@ -133,7 +106,7 @@ def filter_gene_count_dict(gene_count_dict: dict) -> dict:
 
 
 def concatenate_faa(*args: [Path], outname: Path):
-    """ Takes a list of .faa Path objects and concatenates them into a single file"""
+    """ Takes a list of Path objects and concatenates them into a single file"""
     str_arg_list = [str(f) for f in args]
     outname.touch(exist_ok=True)
     for str_arg in str_arg_list:
@@ -142,14 +115,17 @@ def concatenate_faa(*args: [Path], outname: Path):
     return outname
 
 
-def sort_faa(faa: Path):
-    """
-    Sorts input .faa file by length, creates a new sorted version, delete original
-    # TODO: Implement this myself instead of using seqkit
-    # TODO: Should be very easy to do (sequences to dictionary {header:seq} -> sort keys -> write to file)
-    """
-    outname = faa.with_suffix(".sorted.faa")
-    cmd = f"seqkit sort --by-length --reverse {faa} > {outname}"
-    run_subprocess(cmd, get_stdout=True)
-    faa.unlink()
-    return outname
+def sort_fasta(fasta: Path, remove_original: bool = False) -> Path:
+    original_suffix = fasta.suffix
+    handle = open(str(fasta), "r")
+    parsed = SeqIO.parse(handle, "fasta")
+    sorted_list = [f for f in sorted(parsed, key=lambda x: x.id)]
+    sorted_ = fasta.with_suffix(f".sorted{original_suffix}")
+    with open(str(sorted_), 'w') as f:
+        for s in sorted_list:
+            f.write(f">{s.description}\n")
+            f.write(f"{str(s.seq)}\n")
+    if remove_original:
+        fasta.unlink()
+    handle.close()
+    return sorted_
