@@ -24,7 +24,7 @@ def print_version(ctx, param, value):
     print(f"Version\t: {__version__}")
     print(f"Authors\t: {', '.join(__authors__)}")
     print(f"Email\t: {__email__}")
-    print(f"Source\t: https://github.com/bfssi-forest-dussault/centreseq")
+    print(f"Source\t: https://github.com/BFSSI-Bioinformatics-Lab/centreseq")
     quit()
 
 
@@ -189,10 +189,6 @@ def core(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq
               default=None,
               help='Number of CPUs to dedicate to parallelizable steps of the pipeline.'
                    'Will take all available CPUs - 1 if not specified.')
-# @click.option('-vcf', '--vcf-flag',
-#               help='Use this flag to generate variant calls for each cluster.',
-#               default=False,
-#               is_flag=True)
 @click.option('-v', '--verbose',
               is_flag=True,
               default=False,
@@ -225,21 +221,19 @@ def tree(summary_report: Path, prokka_dir: Path, outdir: Path, percentile: float
         n_cpu = set_cpu_count(n_cpu)
 
     main_log.info("Started Core Tree Pipeline")
-    main_log.debug(f"summary_report: {summary_report}")
-    main_log.debug(f"prokka_dir: {prokka_dir}")
-    main_log.debug(f"outdir: {outdir}")
-    main_log.debug(f"percentile: {percentile}")
-    main_log.debug(f"n_cpu: {n_cpu}")
-    main_log.debug(f"verbose: {verbose}")
+    main_log.debug(f"summary_report:\t{summary_report}")
+    main_log.debug(f"prokka_dir:\t{prokka_dir}")
+    main_log.debug(f"outdir:\t{outdir}")
+    main_log.debug(f"percentile:\t{percentile}")
+    main_log.debug(f"n_cpu:\t{n_cpu}")
+    main_log.debug(f"verbose:\t{verbose}")
 
     # Call the pipeline
-    vcf_flag = False  # This functionality is disabled for the forseeable future
     tree_pipeline(summary_report=summary_report,
                   prokka_dir=prokka_dir,
                   outdir=outdir,
                   n_cpu=n_cpu,
-                  percentile=percentile,
-                  vcf_flag=vcf_flag)
+                  percentile=percentile)
 
 
 @centreseq.command(short_help="Helper tool to extract sequences from a particular core cluster",
