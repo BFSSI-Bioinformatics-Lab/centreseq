@@ -3,7 +3,7 @@ import logging
 
 main_log = logging.getLogger('main_log')
 
-EXTERNAL_DEPENDENCIES = ['mmseqs', 'prokka', 'muscle', 'seqkit', 'snp-sites']
+EXTERNAL_DEPENDENCIES = ['mmseqs', 'prokka', 'muscle']
 
 
 def dependency_check(dependency: str) -> bool:
