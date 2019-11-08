@@ -94,7 +94,7 @@ def log_mmseqs_output(out: str):
     out_lines = out.split("\n")
     for out_line in out_lines:
         if not out_line.strip() == "":
-            mmseqs_log.debug(out_line)
+            mmseqs_log.info(out_line)
 
 
 def filter_gene_count_dict(gene_count_dict: dict) -> dict:
