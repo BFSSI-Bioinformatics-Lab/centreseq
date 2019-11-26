@@ -13,6 +13,7 @@ with warnings.catch_warnings():
 
 main_log = logging.getLogger('main_log')
 mmseqs_log = logging.getLogger('mmseqs_log')
+prokka_log = logging.getLogger('prokka_log')
 
 
 def get_list_union(*args: list) -> set:
@@ -87,14 +88,14 @@ def run_subprocess(cmd: str, get_stdout=False) -> str:
         return cmd
 
 
-def log_mmseqs_output(out: str):
+def log_subprocess_output(out: str, logger_instance):
     """
     Drops output from run_subrocess into the logging module
     """
     out_lines = out.split("\n")
     for out_line in out_lines:
         if not out_line.strip() == "":
-            mmseqs_log.info(out_line)
+            logger_instance.info(out_line)
 
 
 def filter_gene_count_dict(gene_count_dict: dict) -> dict:
