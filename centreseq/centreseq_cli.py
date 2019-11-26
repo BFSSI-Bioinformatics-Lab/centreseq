@@ -28,19 +28,27 @@ def print_version(ctx, param, value):
     quit()
 
 
-def setup_logger(logger_name: str, log_file: Path, title: str, level=logging.INFO):
+def setup_logger(logger_name: str, log_file: Path, title: str, level=logging.INFO, stream: bool = True,
+                 fancy: bool = True):
     logger = logging.getLogger(logger_name)
-    formatter = logging.Formatter(f'\033[92m \033[1m %(asctime)s - {title} %(levelname)s:\033[0m %(message)s ',
-                                  "%Y-%m-%d %H:%M:%S")
-    file_formatter = logging.Formatter(f'[%(asctime)s - %(levelname)s]\t %(message)s', "%Y-%m-%d %H:%M:%S")
+    if fancy:
+        formatter = logging.Formatter(f'\033[92m \033[1m %(asctime)s - {title} %(levelname)s:\033[0m %(message)s ',
+                                      "%Y-%m-%d %H:%M:%S")
+        file_formatter = logging.Formatter(f'[%(asctime)s - %(levelname)s]\t %(message)s', "%Y-%m-%d %H:%M:%S")
+    else:
+        formatter = logging.Formatter()
+        file_formatter = logging.Formatter()
+
     file_handler = logging.FileHandler(log_file, mode='w')
     file_handler.setFormatter(file_formatter)
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(formatter)
+
+    if stream:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        logger.addHandler(stream_handler)
 
     logger.setLevel(level)
     logger.addHandler(file_handler)
-    logger.addHandler(stream_handler)
 
 
 def convert_to_path(ctx, param, value):
@@ -82,11 +90,12 @@ def centreseq():
               default=None,
               help='Number of CPUs to dedicate to parallelizable steps of the pipeline. '
                    'Will take all available CPUs - 1 by default.')
-@click.option('--n-cpu-pickbest',
+@click.option('--n-cpu-medoid',
               type=click.INT,
               required=False,
               default=2,
-              help="Number of CPUs for pick_best_nucleotide. You will need substantial RAM per CPU.")
+              help="Number of CPUs for the representative medoid picking step (if enabled). "
+                   "You will need substantial RAM per CPU.")
 @click.option('-m', '--min-seq-id',
               type=click.FLOAT,
               required=False,
@@ -98,13 +107,12 @@ def centreseq():
               default=0.95,
               help='Sets the mmseqs cluster coverage parameter "-c" directly. '
                    'Defaults to 0.95, which is the recommended setting.')
-@click.option('--no-optimize',
+@click.option('--medoid-repseqs',
               is_flag=True,
               default=False,
-              help='Set this flag to skip the "pick best nucleotide" step. '
-                   'Setting this will improve runtime considerably but will provide an arbitrary representative '
-                   'sequence rather than a representative medoid. This parameter has no effect on the number of '
-                   'core clusters detected.')
+              help='This setting will identify the representative medoid nucleotide sequence for each core cluster. '
+                   'Enabling this will increase computation time considerably. Note that this parameter has no effect'
+                   ' on the number of core clusters detected.')
 @click.option('--pairwise',
               is_flag=True,
               default=False,
@@ -120,8 +128,8 @@ def centreseq():
               is_eager=True,
               callback=print_version,
               expose_value=False)
-def core(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq_id: float, coverage_length: float,
-         no_optimize: bool, pairwise: bool, verbose: bool):
+def core(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_medoid: int, min_seq_id: float, coverage_length: float,
+         medoid_repseqs: bool, pairwise: bool, verbose: bool):
     # Create outdir
     os.makedirs(str(outdir), exist_ok=True)
 
@@ -133,12 +141,16 @@ def core(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq
     main_log_file = log_dir / 'core_pipeline.log'
     if verbose:
         setup_logger(logger_name='main_log', log_file=main_log_file, title="centreseq", level=logging.DEBUG)
-        mmseqs_log_file = log_dir / 'mmseqs2.log'
-        setup_logger(logger_name='mmseqs_log', log_file=mmseqs_log_file, title="mmseqs2", level=logging.DEBUG)
+        setup_logger(logger_name='mmseqs_log', log_file=(log_dir / 'mmseqs2.log'), title="mmseqs2", level=logging.DEBUG,
+                     fancy=False)
+        setup_logger(logger_name='prokka_log', log_file=(log_dir / 'prokka.log'), title="prokka", level=logging.DEBUG,
+                     fancy=False)
     else:
         setup_logger(logger_name='main_log', log_file=main_log_file, title="centreseq", level=logging.INFO)
-        mmseqs_log_file = log_dir / 'mmseqs2.log'
-        setup_logger(logger_name='mmseqs_log', log_file=mmseqs_log_file, title="mmseqs2", level=logging.INFO)
+        setup_logger(logger_name='mmseqs_log', log_file=(log_dir / 'mmseqs2.log'), title="mmseqs2", level=logging.INFO,
+                     stream=False, fancy=False)
+        setup_logger(logger_name='prokka_log', log_file=(log_dir / 'prokka.log'), title="prokka", level=logging.INFO,
+                     stream=False, fancy=False)
 
     main_log = logging.getLogger('main_log')
 
@@ -156,8 +168,8 @@ def core(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq
         n_cpu = set_cpu_count(n_cpu)
 
     # Call the pipeline
-    core_pipeline(fasta_dir=fasta_dir, outdir=outdir, n_cpu=n_cpu, n_cpu_pickbest=n_cpu_pickbest, min_seq_id=min_seq_id,
-                  coverage_length=coverage_length, no_optimize=no_optimize, pairwise=pairwise)
+    core_pipeline(fasta_dir=fasta_dir, outdir=outdir, n_cpu=n_cpu, n_cpu_pickbest=n_cpu_medoid, min_seq_id=min_seq_id,
+                  coverage_length=coverage_length, medoid_repseqs=medoid_repseqs, pairwise=pairwise)
 
 
 @centreseq.command(short_help="Produces output for phylogenetic tree software",
