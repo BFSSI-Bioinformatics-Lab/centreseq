@@ -5,9 +5,10 @@ from typing import Optional
 from dataclasses import dataclass
 from collections.__init__ import Counter
 
-from centreseq.bin.core.accessories import run_subprocess
+from centreseq.bin.core.accessories import run_subprocess, log_subprocess_output
 
 main_log = logging.getLogger('main_log')
+prokka_log = logging.getLogger('prokka_log')
 
 """
 TODO: Have some sort of automatic file renaming so Prokka doesn't auto fail
@@ -67,7 +68,8 @@ def call_prokka(fasta_path: Path, sample_id: str, outdir: Path, n_cpu: int) -> O
     """ Makes a system call to Prokka, once complete populates a ProkkaObject with relevant data """
     cmd = f"prokka --centre CORE --compliant --kingdom Bacteria " \
           f"--cpus {n_cpu} --prefix {sample_id} --locustag {sample_id} --outdir {outdir} {fasta_path}"
-    run_subprocess(cmd, get_stdout=True)
+    output = run_subprocess(cmd, get_stdout=True)
+    log_subprocess_output(output, logger_instance=prokka_log)
     # cleanup_prokka(prokka_dir=outdir)  # TODO: Turn this on - will remove extraneous Prokka results
     prokka_object = prokka_obj_from_results_dir(prokka_dir=outdir)
     return prokka_object
