@@ -1,8 +1,11 @@
 import shutil
+import logging
 from pathlib import Path
 from dataclasses import dataclass
-from centreseq.bin.core.accessories import run_subprocess, concatenate_faa, sort_fasta, log_mmseqs_output
+from centreseq.bin.core.accessories import run_subprocess, concatenate_faa, sort_fasta, log_subprocess_output
 from centreseq.bin.core.sample_handling import SampleObject
+
+mmseqs_log = logging.getLogger("mmseqs_log")
 
 
 @dataclass
@@ -44,7 +47,7 @@ def call_mmseqs_createdb(fasta: Path, outdir: Path) -> Path:
     out_db = outdir / (fasta.with_suffix("").name + "_DB")
     cmd = f"mmseqs createdb {fasta} {out_db}"
     output = run_subprocess(cmd, get_stdout=True)
-    log_mmseqs_output(output)
+    log_subprocess_output(output, logger_instance=mmseqs_log)
     return out_db
 
 
@@ -56,9 +59,9 @@ def call_mmseqs_cluster(database: Path, outdir: Path, n_cpu: int, min_seq_id: fl
         shutil.rmtree(tmp_dir)
     tmp_dir.mkdir(parents=True)
     cmd = f"mmseqs cluster {database} {out_clusterdb} {tmp_dir} " \
-        f"--threads {n_cpu} --min-seq-id {min_seq_id} --add-self-matches"
+          f"--threads {n_cpu} --min-seq-id {min_seq_id} --add-self-matches"
     output = run_subprocess(cmd, get_stdout=True)
-    log_mmseqs_output(output)
+    log_subprocess_output(output, logger_instance=mmseqs_log)
 
     if tmp_dir.exists():
         shutil.rmtree(tmp_dir)
@@ -86,11 +89,11 @@ def call_mmseqs_linclust(database: Path, outdir: Path, n_cpu: int, min_seq_id: f
     """
 
     cmd = f"mmseqs linclust {database} {out_clusterdb} {tmp_dir} " \
-        f"--threads {n_cpu} --min-seq-id {min_seq_id} --add-self-matches --alignment-mode {alignment_mode} " \
-        f"--cov-mode 1 -c {coverage_length} --sort-results 1"
+          f"--threads {n_cpu} --min-seq-id {min_seq_id} --add-self-matches --alignment-mode {alignment_mode} " \
+          f"--cov-mode 1 -c {coverage_length} --sort-results 1"
 
     output = run_subprocess(cmd, get_stdout=True)
-    log_mmseqs_output(output)
+    log_subprocess_output(output, logger_instance=mmseqs_log)
 
     if tmp_dir.exists():
         shutil.rmtree(tmp_dir)
@@ -105,7 +108,7 @@ def call_mmseqs_result2repseq(database: Path, cluster_database: Path, outdir: Pa
     representative_sequences = outdir / database.with_suffix(".representative_sequences").name
     cmd = f"mmseqs result2repseq {database} {cluster_database} {representative_sequences} --threads {n_cpu}"
     output = run_subprocess(cmd, get_stdout=True)
-    log_mmseqs_output(output)
+    log_subprocess_output(output, logger_instance=mmseqs_log)
     return representative_sequences
 
 
@@ -123,7 +126,7 @@ def call_mmseqs_result2flat(database: Path, outdir: Path, cluster_seqs: Path, re
     if use_fasta_header:
         cmd += "--use-fasta-header"
     output = run_subprocess(cmd, get_stdout=True)
-    log_mmseqs_output(output)
+    log_subprocess_output(output, logger_instance=mmseqs_log)
     return cluster_fasta
 
 
@@ -134,7 +137,7 @@ def call_mmseqs_result2tsv(database: Path, cluster_database: Path, outdir: Path)
     cluster_tsv = outdir / database.with_suffix(".cluster.tsv").name
     cmd = f"mmseqs createtsv {database} {database} {cluster_database} {cluster_tsv} --first-seq-as-repr true"
     output = run_subprocess(cmd, get_stdout=True)
-    log_mmseqs_output(output)
+    log_subprocess_output(output, logger_instance=mmseqs_log)
     return cluster_tsv
 
 
@@ -148,7 +151,7 @@ def call_mmseqs_createseqfiledb(database: Path, cluster_database: Path, outdir: 
     if max_sequences is not None:
         cmd += f"--max-sequences {max_sequences} "
     output = run_subprocess(cmd, get_stdout=True)
-    log_mmseqs_output(output)
+    log_subprocess_output(output, logger_instance=mmseqs_log)
     return cluster_seq
 
 
