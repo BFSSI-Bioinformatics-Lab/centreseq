@@ -46,9 +46,9 @@ The primary functionality of centreseq can be found within the the
                                    in the existing Prokka output directory, but
                                    will overwrite all other existing result files.
                                    [required]
-      -n, --n-cpu INTEGER          Number of CPUs to dedicate to parallelizable
-                                   steps of the pipeline. Will take all available
-                                   CPUs - 1 by default.
+      --n-cpu-medoid INTEGER       Number of CPUs for the representative medoid
+                                   picking step (if enabled). You will need
+                                   substantial RAM per CPU.
       --n-cpu-pickbest INTEGER     Number of CPUs for pick_best_nucleotide. You
                                    will need substantial RAM per CPU.
       -m, --min-seq-id FLOAT       Sets the mmseqs cluster parameter "--min-seq-
@@ -56,12 +56,12 @@ The primary functionality of centreseq can be found within the the
       -c, --coverage-length FLOAT  Sets the mmseqs cluster coverage parameter "-c"
                                    directly. Defaults to 0.95, which is the
                                    recommended setting.
-      --no-optimize                Set this flag to skip the pick-best-nucleotide
-                                   step. Setting this will improve runtime but
-                                   will provide an arbitrary representative
-                                   sequence rather than a representative medoid.
-                                   This parameter has no effect on the number of
-                                   core genes detected.
+      --medoid-repseqs             This setting will identify the representative
+                                   medoid nucleotide sequence for each core
+                                   cluster. Enabling this will increase
+                                   computation time considerably. Note that this
+                                   parameter has no effect on the number of core
+                                   clusters detected.
       --pairwise                   Generate pairwise comparisons of all genomes.
                                    This output file can be used to view an
                                    interactive network chart of the core genome in
