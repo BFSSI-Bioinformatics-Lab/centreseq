@@ -20,7 +20,7 @@ from centreseq.bin.visualizations.charts import generate_gene_count_chart
 
 
 def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int, min_seq_id: float,
-                  coverage_length: float, no_optimize: bool, pairwise: bool):
+                  coverage_length: float, medoid_repseqs: bool, pairwise: bool):
     """ Generates a core genome and reports """
     main_log = logging.getLogger('main_log')
     main_log.debug(f"minimum sequence identity = {min_seq_id}")
@@ -147,17 +147,17 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
     main_log.debug(f"Summary report with singletons removed available at {summary_report_filtered}")
 
     # Call pick_best_nucleotide to improve report
-    if not no_optimize:
-        main_log.info(f"Optimizing representative sequences by nucleotide")
+    if medoid_repseqs:
+        main_log.info(f"Finding medoid representative sequences by nucleotide")
         summary_report, changed_names = pick_best_nucleotide(summary_report=summary_report, indir=outdir,
                                                              outdir=report_dir,
                                                              n_cpu=n_cpu_pickbest)
         main_log.info(f"Optimized report available at {summary_report}")
 
         # Log which clusters were altered by pick_best_nucleotide()
-        changed_names_log = outdir / 'logs' / 'pick_best_nucleotide_change_log.txt'
+        changed_names_log = outdir / 'logs' / 'medoid_nucleotide_change_log.txt'
         with open(str(changed_names_log), 'w') as f:
-            f.write(f"The following entries were changed by pick_best_nucleotide:\n")
+            f.write(f"The following entries were changed by the medoid sequence picking script:\n")
             for n in changed_names:
                 f.write(f"{n}\n")
 
@@ -203,10 +203,10 @@ def core_pipeline(fasta_dir: Path, outdir: Path, n_cpu: int, n_cpu_pickbest: int
         main_log.info(f"Coding file for network graph available at {network_coding}."
                       f"\nYou can change the values in the group_id column to alter the "
                       f"colouration of the network chart.")
-        main_log.info("Done!")
 
     main_log.info(f"Building gene count curves")
     generate_gene_count_chart(summary_report=summary_report)
+    main_log.info("Done!")
 
 
 def prokka_pipeline(sample: SampleObject, outdir: Path, n_cpu: int, iteration: int):
