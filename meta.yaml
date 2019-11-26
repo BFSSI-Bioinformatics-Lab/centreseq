@@ -1,6 +1,6 @@
 {% set name = "centreseq" %}
-  {% set version = "0.3.3" %}
-  {% set sha256 = "84aeec69c385b10ac51e6f69e9d61f4772c41f94f5a9bd30793457691b85d8eb" %}
+  {% set version = "0.3.4" %}
+  {% set sha256 = "3943905aa31838ce8988cb56a5b3e7fd4b1c729a0340e7e456c33a0ea2e61fe1" %}
 
 package:
   name: "{{ name }}"
@@ -25,9 +25,9 @@ requirements:
     - biopython >=1.74
     - click >=7.0
     - pandas >=0.24.0
-    - python >=3.6
+    - python >=3.7
     - scipy >=1.1
-    - tqdm >=4.32.2
+    - tqdm >=4.39.0
     - xlsxwriter >=1.1.8
     - seaborn >=0.9.0
     - pytest >=5.0.1
@@ -45,6 +45,7 @@ test:
     - centreseq.bin.visualizations
   commands:
     - centreseq --version
+    - pytest
 
 about:
   home: https://github.com/bfssi-forest-dussault/centreseq
