@@ -1,6 +1,6 @@
 import setuptools
 
-__version__ = '0.3.0'
+__version__ = '0.3.7'
 __author__ = ['Forest Dussault', 'Adrian Verster', 'Nicholas Petronella']
 __email__ = 'forest.dussault@canada.ca'
 
