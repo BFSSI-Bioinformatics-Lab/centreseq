@@ -3,7 +3,7 @@ from pathlib import Path
 import shutil
 import tempfile
 
-DATA_DIR = Path(__file__).parent / 'data'
+DATA_DIR = centreseq_cli.ROOT_DIR / 'data'
 
 
 def test_core_and_tree_modules():

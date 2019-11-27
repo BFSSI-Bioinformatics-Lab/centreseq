@@ -1,6 +1,7 @@
 from centreseq.bin.core.accessories import *
+from centreseq.centreseq_cli import ROOT_DIR
 
-DATA_DIR = Path(__file__).parent / 'data'
+DATA_DIR = ROOT_DIR / 'data'
 
 
 def test_get_list_union():

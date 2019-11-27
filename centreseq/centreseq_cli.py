@@ -16,6 +16,8 @@ __version__ = "0.3.3"
 __authors__ = ["Forest Dussault", "Adrian Verster", "Nicholas Petronella"]
 __email__ = "forest.dussault@canada.ca"
 
+ROOT_DIR = Path(__file__).parent
+
 
 def print_version(ctx, param, value):
     """ TODO: Activate this once there's something to cite """
