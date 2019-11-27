@@ -1,6 +1,6 @@
 {% set name = "centreseq" %}
-  {% set version = "0.3.4" %}
-  {% set sha256 = "3943905aa31838ce8988cb56a5b3e7fd4b1c729a0340e7e456c33a0ea2e61fe1" %}
+  {% set version = "0.3.7" %}
+  {% set sha256 = "5c55f2fe43689b597543d04c3c4089a027c20f97028d97858a68d99abc13d3cb" %}
 
 package:
   name: "{{ name }}"
@@ -45,7 +45,12 @@ test:
     - centreseq.bin.visualizations
   commands:
     - centreseq --version
+
+test:
+  requires:
     - pytest
+  commands:
+    - py.test --pyargs centreseq
 
 about:
   home: https://github.com/bfssi-forest-dussault/centreseq
