@@ -9,3 +9,7 @@ conda create -n centreseq python=3.7
 conda activate centreseq
 conda install centreseq -c bioconda
 ```
+
+### Developer notes
+- Version of mmseqs2 has been pinned at 9-d36de in meta.yaml due to 10-6d92c containing a bug which causes the functional test to 
+hang indefinitely on some systems.
