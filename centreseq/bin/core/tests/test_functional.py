@@ -21,6 +21,7 @@ def test_core_and_tree_modules():
         ]
 
         for f in fastas:
+            assert f.exists()
             shutil.copy(f, str(tmpdir))
 
         outdir = tmpdir / 'outdir'
@@ -60,9 +61,6 @@ def test_core_and_tree_modules():
             n_cpu=centreseq_cli.set_cpu_count(),
             percentile=100.0
         )
-
-        shutil.rmtree("/home/brock/Documents/testdir")
-        shutil.copytree(str(outdir), "/home/brock/Documents/testdir")
 
         assert (treedir / 'aligned_loci').exists()
         assert (treedir / 'concatenated_sequences').exists()
