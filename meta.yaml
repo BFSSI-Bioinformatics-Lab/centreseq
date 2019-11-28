@@ -1,6 +1,6 @@
 {% set name = "centreseq" %}
-  {% set version = "0.3.7" %}
-  {% set sha256 = "5c55f2fe43689b597543d04c3c4089a027c20f97028d97858a68d99abc13d3cb" %}
+  {% set version = "0.3.8" %}
+  {% set sha256 = "c8784c4b924fa357e3f61a6d99e4ac62ac53c9796ee08576f955a926aa8c59a8" %}
 
 package:
   name: "{{ name }}"
@@ -31,7 +31,7 @@ requirements:
     - xlsxwriter >=1.1.8
     - seaborn >=0.9.0
     - pytest >=5.0.1
-    - mmseqs2
+    - mmseqs2 ==9-d36de
     - muscle
     - prokka
 
@@ -45,12 +45,6 @@ test:
     - centreseq.bin.visualizations
   commands:
     - centreseq --version
-
-test:
-  requires:
-    - pytest
-  commands:
-    - py.test --pyargs centreseq
 
 about:
   home: https://github.com/bfssi-forest-dussault/centreseq
