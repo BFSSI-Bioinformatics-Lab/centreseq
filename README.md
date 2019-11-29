@@ -10,6 +10,8 @@ conda activate centreseq
 conda install centreseq -c bioconda
 ```
 
-### Developer notes
+### Developer notes/Known issues
 - Version of mmseqs2 has been pinned at 9-d36de in meta.yaml due to 10-6d92c containing a bug which causes the functional test to 
 hang indefinitely on some systems.
+- Prokka's installation appears to be broken in some cases when just running `conda install prokka -c bioconda`, 
+the solution is to downgrade Perl with `conda install perl=5.22.0`
