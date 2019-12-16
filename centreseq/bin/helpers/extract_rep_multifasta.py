@@ -40,7 +40,7 @@ def extract_rep_multifasta(indir: Path, outdir: Path, cluster_representative: st
     member_list = get_target_member_list(core_tsv, cluster_representative)
 
     # List of sample names of members
-    member_sample_name_list = [member.split("_")[0] for member in member_list]
+    member_sample_name_list = [member.rsplit("_", 1)[0] for member in member_list]
 
     # Prepare dict of member_sample_name:member_rep_seq relationship
     member_dict = dict(zip(member_sample_name_list, member_list))
