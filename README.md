@@ -5,6 +5,9 @@ The most recent documentation can be found at the following URL: https://centres
 
 ### Quick installation in a Conda environment
 ```text
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
 conda create -n centreseq python=3.7
 conda activate centreseq
 conda install centreseq -c bioconda
