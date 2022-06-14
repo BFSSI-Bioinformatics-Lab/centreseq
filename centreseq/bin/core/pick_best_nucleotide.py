@@ -159,7 +159,8 @@ def load_pangenome_list(pangenome_list: list):
     for item in pangenome_list:
         if pd.isnull(item):
             continue
-        sp = "_".join(item.split("_")[:-1])
+        # sp = "_".join(item.split("_")[:-1])
+        sp = gene_to_genome[item]
         assert sp != "", "Cannot read species name from sequence name"
         # If we have any paralogs, then we're going to need to update this
         if len(clusters_global[sp][item]) > 2:
@@ -174,13 +175,15 @@ def prehash_clusters(indir: Path):
     Fills self.clusters to be species-> dict from gene to list of genes in its cluster
     """
     clusters = {}
+    gene_to_genome = {}
     for sp in os.listdir(str(indir / 'mmseqs2')):
         reg_sub = re.sub('\.[^.]*$', '', sp)
         infile_clusters = f"{str(indir)}/mmseqs2/{sp}/{reg_sub}_DB.cluster.tsv"
         if not Path(infile_clusters).is_file():
             infile_clusters = f"{str(indir)}/mmseqs2/{sp}/{reg_sub}.cluster.tsv"
-        clusters[sp] = load_clusters(infile_clusters)
-    return clusters
+        clusters[sp], gene_to_genome_single = load_clusters(infile_clusters)
+        gene_to_genome.update(gene_to_genome_single)
+    return clusters, gene_to_genome
 
 
 def find_medoid(indir, pangenome_list):
@@ -233,11 +236,14 @@ def load_clusters(infile: str, genes_oi: [str] = []):
     """
 
     cluster = defaultdict(list)
+    gene_to_genome = {}
+    genome = Path(Path(infile).parents[0]).name # Name of the parent directory
     with open(infile) as f:
         for line in csv.reader(f, delimiter="\t"):
             gene1 = line[0]
             gene2 = line[1]
-
+            gene_to_genome[gene1] = genome
+            gene_to_genome[gene2] = genome
             if len(genes_oi) > 0:
                 if gene1 not in genes_oi:
                     continue
@@ -249,7 +255,7 @@ def load_clusters(infile: str, genes_oi: [str] = []):
     # Every cluster needs to have itself in it
     for g in genes_oi:
         assert g in cluster[g]
-    return cluster
+    return cluster, gene_to_genome
 
 
 def calc_distance_matrix(all_seqs: list):
@@ -327,7 +333,7 @@ def pick_best_nucleotide(summary_report: Path, indir: Path, outdir: Path, n_cpu:
     """
     Applies PickBestNucleotide() to each row of summary_report.csv
     :param summary_report: path to summary_report.csv
-    :param indir: directory of your HardCORE run
+    :param indir: directory of your centreseq run
     :param outdir: directory where the summary_report_optimized.csv file will be written
     :param n_cpu: Numbers of cpus. You need at least 10GB of memory per CPU for mmseqs
     :return: the path of the output file
@@ -358,7 +364,8 @@ def pick_best_nucleotide(summary_report: Path, indir: Path, outdir: Path, n_cpu:
 
     # since we can't keep this in a class while multiprocessing, we need to save the clusters as a global
     global clusters_global
-    clusters_global = prehash_clusters(indir=indir)
+    global gene_to_genome
+    clusters_global, gene_to_genome = prehash_clusters(indir=indir)
 
     # Max memory for each mmseqs process
     global max_mem_use
@@ -389,27 +396,3 @@ def pick_best_nucleotide(summary_report: Path, indir: Path, outdir: Path, n_cpu:
 
     df_preliminary.to_csv(str(out_report), sep="\t", header=True, index=False)
     return out_report, to_change_names
-
-# if __name__ == "__main__":
-#     summary_report = "CentreSeq-m90c90/reports/summary_report_singletons_removed.tsv"
-#     pick_best_nucleotide(Path('CentreSeq-m90c90/reports/summary_report_singletons_removed.tsv'), Path('CentreSeq-m90c90/'), Path('CentreSeq-m90c90/'))
-#     # Path("/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/"),Path("/mnt/Freya/Analysis/GenomeSimilarity/test_genomes_6/"))
-#     # qwe
-#     #indir_ = "/mnt/Freya/Analysis/GenomeSimilarity/1250-Vibrio_HardCORE/"
-#     picker_ = PickBestNucleotide(indir=indir_)
-#
-#     #summary_report_ = indir_ + 'summary_report.csv'
-#     summary_report = "CentreSeq-m90c90/reports/summary_report_singletons_removed.tsv"
-#
-#     df_preliminary_ = pd.read_csv(summary_report_, sep="\t")
-#     for i_ in range(df_preliminary_.shape[0]):
-#         print(i_)
-#         pg_list_ = df_preliminary_.iloc[i_, 4:].tolist()
-#         picker_.load_pangenome_list(pg_list_)
-#         if picker_.update:
-#             picker_.find_medoid()
-#         print(df_preliminary_.iloc[i_, 0])
-#         print("Before {}: After: {}".format(picker_.cluster_pre[1], picker_.cluster_post[1]))
-#         print(picker_.cluster_post != picker_.cluster_pre)
-#         print(picker_.medoid)
-#         print(picker_.cluster_post)
